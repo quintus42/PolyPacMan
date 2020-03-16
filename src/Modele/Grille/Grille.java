@@ -3,9 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package Grille;
+package Modele.Grille;
 
-import Case.CaseStatique;
+import Modele.Case.CaseStatique;
 import java.util.Dictionary;
 import javafx.geometry.Point2D;
 
@@ -16,9 +16,9 @@ import javafx.geometry.Point2D;
  */
 public class Grille {
     private CaseStatique[][] tabCaseStatique;
-    private Dictionary<Entite.Entite, Point2D> tabEntites;
+    private Dictionary<Modele.Entite.Entite, Point2D> tabEntites;
     
-    public boolean depOk(String dep, Entite.Entite e){
+    public boolean depOk(String dep, Modele.Entite.Entite e){
         return false;
     }
 }

@@ -3,12 +3,12 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package Case;
+package Modele.Case;
 
 /**
  *
  * @author Epulapp
  */
-public class SuperPacGomme {
+public class PacGomme extends Couloir {
     
 }
