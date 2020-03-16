@@ -9,7 +9,9 @@ package Modele.Entite;
  *
  * @author Epulapp
  */
-public abstract class Entite {
-    public Direction direction;
-    public int vitesse;
+public enum Direction {
+    HAUT,
+    BAS, 
+    DROITE,
+    GAUCHE;
 }
