@@ -21,22 +21,12 @@ public class Affichage extends Application {
     
     @Override
     public void start(Stage primaryStage) {
-        Button btn = new Button();
-        btn.setText("Say 'Bonjour World'");
-        btn.setOnAction(new EventHandler<ActionEvent>() {
-            
-            @Override
-            public void handle(ActionEvent event) {
-                System.out.println("Hello World!");
-            }
-        });
         
         StackPane root = new StackPane();
-        root.getChildren().add(btn);
         
-        Scene scene = new Scene(root, 300, 250);
+        Scene scene = new Scene(root, 600, 600);
         
-        primaryStage.setTitle("Hello World!");
+        primaryStage.setTitle("Pacman");
         primaryStage.setScene(scene);
         primaryStage.show();
     }
