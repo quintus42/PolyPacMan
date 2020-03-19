@@ -35,7 +35,7 @@ public class Grille extends Observable implements Runnable{
     public CaseStatique[][] tabCaseStatique;
     public HashMap<Modele.Entite.Entite, Point> tabEntites;
     public HashMap<Point, Modele.Entite.Entite> tabPosition;
-    private boolean partieEnCours = false;
+    public boolean partieEnCours = false;
     private boolean superPacGomme = false;
     private boolean jeuEnPause = false;
     
@@ -277,6 +277,7 @@ public class Grille extends Observable implements Runnable{
     
     public boolean lireGrilleFichier(){
         try{
+            partieEnCours = true;
             BufferedReader buffer = new BufferedReader(new FileReader(Configuration.CHEMIN_FICHIER_CUSTOMMAP)); //on ouvre le fichier une première fois pour le nb de ligne
             String ligne;
             int nbLigne = 0;

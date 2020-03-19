@@ -115,7 +115,13 @@ public class Affichage extends Application {
                             maGrille.changerDirectionPacman(Direction.DROITE);
                             break;
                         case N :
-                            maGrille.lireGrilleFichier();
+                            maGrille.changerDirectionPacman(Direction.AUCUNE);
+                            if (maGrille.partieEnCours) {
+                                maGrille.lireGrilleFichier();
+                            }else{
+                                maGrille.start();
+                                maGrille.lireGrilleFichier();
+                            }
                             break;
                     }
                 }
@@ -191,7 +197,7 @@ public class Affichage extends Application {
                 tab[v.getX()][v.getY()].setImage(pm.getImPacman());
             }
             else if (k instanceof Fantome){
-                tab[v.getX()][v.getY()].setImage(Fantome.getImBlueGhost());
+                tab[v.getX()][v.getY()].setImage(rGhost.getImGhost());
             }
             tab[v.getX()][v.getY()].setFitWidth(Configuration.IMG_WIDTH);
             tab[v.getX()][v.getY()].setFitHeight(Configuration.IMG_HEIGHT);
