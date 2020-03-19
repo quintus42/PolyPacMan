@@ -26,8 +26,8 @@ import javafx.util.Pair;
 public class Grille extends Observable implements Runnable{
 
     public CaseStatique[][] tabCaseStatique;
-    private HashMap<Modele.Entite.Entite, Point> tabEntites;
-    private HashMap<Point, Modele.Entite.Entite> tabPosition;
+    public HashMap<Modele.Entite.Entite, Point> tabEntites;
+    public HashMap<Point, Modele.Entite.Entite> tabPosition;
     private boolean partieEnCours = false;
     private boolean superPacGomme = false;
     private boolean jeuEnPause = false;

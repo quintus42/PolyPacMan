@@ -10,9 +10,7 @@ import Modele.Case.Mur;
 import Modele.Case.PacGomme;
 import Modele.Case.SuperPacGomme;
 import Modele.Configuration;
-import Modele.Entite.Direction;
-import Modele.Entite.Fantome;
-import Modele.Entite.PacMan;
+import Modele.Entite.*;
 import Modele.Grille.Grille;
 import javafx.application.Application;
 import javafx.event.ActionEvent;
@@ -25,6 +23,8 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Paint;
 import javafx.stage.Stage;
+
+import java.awt.*;
 import java.util.Observable;
 import java.util.Observer;
 import javafx.scene.input.KeyCode;
@@ -39,16 +39,14 @@ public class Affichage extends Application {
     private PacMan pm = new PacMan();
     private PacGomme pg = new PacGomme();
     private SuperPacGomme spg = new SuperPacGomme();
-    private Fantome rGhost = new Fantome();
-    private Fantome pGhost = new Fantome();
-    private Fantome bGhost = new Fantome();
-    private Fantome oGhost = new Fantome();
+    private Blinky rGhost = new Blinky();
+    private Pinky pGhost = new Pinky();
+    private Inky bGhost = new Inky();
+    private Clyde oGhost = new Clyde();
     private Mur wall = new Mur();
     private Couloir corridor = new Couloir();
+
     private Grille maGrille = new Grille();
-
-    private Image imIcon = new Image(Configuration.PATH_TO_IMG + "icon.png",Configuration.IMG_WIDTH,Configuration.IMG_HEIGHT,false,false);
-
     private GridPane grid = new GridPane();
 
     private int size_x  = Configuration.LARGEUR_GRILLE;
@@ -73,6 +71,8 @@ public class Affichage extends Application {
         }
 
         setGridImg();
+
+        Image imIcon = new Image(Configuration.PATH_TO_IMG + "icon.png",Configuration.IMG_WIDTH,Configuration.IMG_HEIGHT,false,false);
 
         Scene scene = new Scene(root, Configuration.WINDOW_WIDTH, Configuration.WINDOW_HEIGTH, Paint.valueOf("Black"));
         primaryStage.getIcons().add(imIcon);
@@ -137,6 +137,13 @@ public class Affichage extends Application {
                 }
                 else if (maGrille.tabCaseStatique[i][j] instanceof SuperPacGomme){
                     tab[i][j].setImage(spg.getImSuperPacGomme());
+                }
+                else if(maGrille.tabPosition.get(new Point(i,j)) instanceof PacMan){
+                    tab[i][j].setImage(pm.getImPacman());
+                }
+                else if(maGrille.tabPosition.get(new Point(i,j)) instanceof Fantome){
+                    // A retoucher pour s'adapter au fantome rencontré !
+                    tab[i][j].setImage(oGhost.getImGhost());
                 }
                 tab[i][j].setFitWidth(Configuration.IMG_WIDTH);
                 tab[i][j].setFitHeight(Configuration.IMG_HEIGHT);
