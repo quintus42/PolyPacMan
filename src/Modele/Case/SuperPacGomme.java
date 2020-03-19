@@ -16,7 +16,7 @@ public class SuperPacGomme extends Couloir {
 
     private final static Image imSuperPacGomme = new Image(Configuration.PATH_TO_IMG + "SuperPacGomme.png");
 
-    public static Image getImSuperPacGomme() {
+    public Image getImSuperPacGomme() {
         return imSuperPacGomme;
     }
 }

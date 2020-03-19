@@ -5,7 +5,10 @@
  */
 package Vue;
 
+import Modele.Case.Couloir;
 import Modele.Case.Mur;
+import Modele.Case.PacGomme;
+import Modele.Case.SuperPacGomme;
 import Modele.Configuration;
 import Modele.Entite.Fantome;
 import Modele.Entite.PacMan;
@@ -28,38 +31,37 @@ import java.util.Observer;
  *
  * @author Epulapp
  */
-public class Affichage extends Application implements Observer {
+public class Affichage extends Application {
 
+    //Initialisation des modèles
+    private PacMan pm = new PacMan();
+    private PacGomme pg = new PacGomme();
+    private SuperPacGomme spg = new SuperPacGomme();
+    private Fantome rGhost = new Fantome();
+    private Fantome pGhost = new Fantome();
+    private Fantome bGhost = new Fantome();
+    private Fantome oGhost = new Fantome();
+    private Mur wall = new Mur();
+    private Couloir corridor = new Couloir();
+    private Grille maGrille = new Grille();
 
+    private Image imIcon = new Image(Configuration.PATH_TO_IMG + "icon.png",Configuration.IMG_WIDTH,Configuration.IMG_HEIGHT,false,false);
 
+    private GridPane grid = new GridPane();
+
+    private int size_x  = Configuration.LARGEUR_GRILLE;
+    private int size_y = Configuration.HAUTEUR_GRILLE;
+
+    private ImageView[][]tab = new ImageView[size_x][size_y];
 
     @Override
     public void start(Stage primaryStage) {
-
-        //Initialisation des modèles
-        PacMan pm = new PacMan();
-        Fantome rGhost = new Fantome();
-        Fantome pGhost = new Fantome();
-        Fantome bGhost = new Fantome();
-        Fantome oGhost = new Fantome();
-        Mur wall = new Mur();
-        Grille maGrille = new Grille();
-
-
-        Image imIcon = new Image(Configuration.PATH_TO_IMG + "icon.png",Configuration.IMG_WIDTH,Configuration.IMG_HEIGHT,false,false);
-
-        //A remplacer par grille custom dès que possible
-        GridPane grid = new GridPane();
 
         //Ajout des items à la grille
         StackPane root = new StackPane();
         root.getChildren().add(grid); //Ajout de la grille
 
-        int size_x  = Configuration.LARGEUR_GRILLE;
-        int size_y = Configuration.HAUTEUR_GRILLE;
-
         // initialisation de la grille (sans image)
-        ImageView[][]tab = new ImageView[size_x][size_y];
         for (int i = 0; i < size_x; i++) {
             for (int j = 0; j < size_y; j++) {
                 ImageView img = new ImageView();
@@ -68,32 +70,46 @@ public class Affichage extends Application implements Observer {
             }
         }
 
-
-        // Pour ajouter les murs sur tous le tour de la grille
-        for (int i = 0; i < size_x; i++) {
-            for (int j = 0; j < size_y; j++) {
-//                if (i == 0 || j == 0 || i == (size_x-1) || j == (size_y-1)){
-                tab[i][j].setImage(wall.getImFullWall());
-                tab[i][j].setFitWidth(Configuration.IMG_WIDTH);
-                tab[i][j].setFitHeight(Configuration.IMG_HEIGHT);
-                tab[i][j].setPreserveRatio(true);
-                tab[i][j].setSmooth(true);
-                tab[i][j].setCache(true);
-//                }
-            }
-        }
+        setGridImg();
 
         Scene scene = new Scene(root, Configuration.WINDOW_WIDTH, Configuration.WINDOW_HEIGTH, Paint.valueOf("Black"));
         primaryStage.getIcons().add(imIcon);
         primaryStage.setTitle("Pacman");
         primaryStage.setScene(scene);
         primaryStage.show();
-
     }
 
-    @Override
-    public void update(Observable observable, Object o) {
+    Observer o =  new Observer() { // l'observer observe l'obervable (update est exécuté dès notifyObservers() est appelé côté modèle )
+        @Override
+        public void update(Observable o, Object arg) {
+            setGridImg();
+        }
+    };
 
+    //Affiche les images correspondantes au type de case présente dans le tableau
+    private void setGridImg(){
+        for (int i = 0; i < size_x ; i++) {
+            for (int j = 0; j < size_y; j++) {
+
+                if(maGrille.tabCaseStatique[i][j] instanceof Mur) {
+                    tab[i][j].setImage(wall.getImFullWall());
+                }
+                else if (maGrille.tabCaseStatique[i][j] instanceof Couloir){
+                    //Rien à ajouter parce que les couloir c'est noir
+                }
+                else if (maGrille.tabCaseStatique[i][j] instanceof PacGomme) {
+                    tab[i][j].setImage(pg.getImPacGomme());
+                }
+                else if (maGrille.tabCaseStatique[i][j] instanceof SuperPacGomme){
+                    tab[i][j].setImage(spg.getImSuperPacGomme());
+                }
+                tab[i][j].setFitWidth(Configuration.IMG_WIDTH);
+                tab[i][j].setFitHeight(Configuration.IMG_HEIGHT);
+                tab[i][j].setPreserveRatio(true);
+                tab[i][j].setSmooth(true);
+                tab[i][j].setCache(true);
+            }
+        }
     }
 
     /**
