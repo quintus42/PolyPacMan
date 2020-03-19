@@ -5,10 +5,17 @@
  */
 package Modele.Case;
 
+import javafx.scene.image.Image;
+
 /**
  *
  * @author Epulapp
  */
 public class PacGomme extends Couloir {
-    
+
+    private final Image imPacGomme = new Image("file:src/assets/PacGomme.png");
+
+    public Image getImPacGomme() {
+        return imPacGomme;
+    }
 }
