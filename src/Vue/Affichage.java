@@ -46,7 +46,7 @@ public class Affichage extends Application implements Observer {
         Grille maGrille = new Grille();
 
 
-        Image imIcon = new Image(Configuration.PATH_TO_IMG + "icon.png",IMG_WIDTH,IMG_HEIGHT,false,false);
+        Image imIcon = new Image(Configuration.PATH_TO_IMG + "icon.png",Configuration.IMG_WIDTH,Configuration.IMG_HEIGHT,false,false);
 
         //A remplacer par grille custom dès que possible
         GridPane grid = new GridPane();

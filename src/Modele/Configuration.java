@@ -10,9 +10,9 @@ public class Configuration {
 
     public final static int LARGEUR_GRILLE = 20; // X
 
-    public final static int WINDOW_WIDTH = 800; // X
+    public final static int WINDOW_WIDTH = 500; // X
 
-    public final static int WINDOW_HEIGTH = 800; // X
+    public final static int WINDOW_HEIGTH = 500; // Y
 
     public final static int IMG_WIDTH = WINDOW_WIDTH /  LARGEUR_GRILLE; // X
 
