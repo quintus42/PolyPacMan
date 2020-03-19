@@ -6,9 +6,15 @@
 package Modele.Grille;
 
 import Modele.Case.CaseStatique;
+import Modele.Case.Couloir;
+import Modele.Case.Mur;
+import Modele.Case.PacGomme;
+import Modele.Case.SuperPacGomme;
 import Modele.Configuration;
 import Modele.Entite.Entite;
 import Modele.Entite.PacMan;
+import java.io.BufferedReader;
+import java.io.FileReader;
 import java.util.Dictionary;
 import java.util.HashMap;
 import java.util.Map.Entry;
@@ -139,6 +145,20 @@ public class Grille extends Observable implements Runnable{
             tabPosition.replace(tabEntites.get(e), e);
         }
     }
+    
+     public void changerPositionPacman(Point p){
+        Entite e = null;
+        for(Entite ent: tabEntites.keySet()){
+            if (ent instanceof PacMan) {
+                e = ent;
+            }
+        }
+        if (e != null) {
+            tabEntites.replace(e, p);
+            tabPosition.replace(p, e);
+        }
+    }
+    
     private void deplacementEntite(Entite e) {
         Point oldPos = tabEntites.get(e);
         switch(e.direction){
@@ -200,4 +220,42 @@ public class Grille extends Observable implements Runnable{
     public void unPauseGame() {
         jeuEnPause = false;
     }
+    
+    public boolean lireGrilleFichier(){
+        try{
+            BufferedReader buffer = new BufferedReader(new FileReader(Configuration.CHEMIN_FICHIER_CUSTOMMAP)); //on ouvre le fichier une première fois pour le nb de ligne
+            String ligne;
+            int y = 0;
+            while ((ligne = buffer.readLine()) != null){ //on lit le fichier
+                tabCaseStatique = new CaseStatique[ligne.length()][];
+                for(char c: ligne.toCharArray()){
+                    // A améliorer plus tard pour charger une map
+                    switch(c){
+                        case 'm' : //mur
+                            tabCaseStatique[ligne.indexOf(String.valueOf(c))][y] = new Mur();
+                            break;
+                        case 'c' : //couloir
+                            tabCaseStatique[ligne.indexOf(String.valueOf(c))][y] = new Couloir();
+                            break;
+                        case 'p' : //pacman on définit ici sa position !
+                            tabCaseStatique[ligne.indexOf(String.valueOf(c))][y] = new Couloir();
+                            changerPositionPacman(new Point(ligne.indexOf(String.valueOf(c)), y));
+                            break;
+                        case 'g' : //pac-gomme
+                            tabCaseStatique[ligne.indexOf(String.valueOf(c))][y] = new PacGomme();
+                            break;
+                        case 'G' : //super pac-gomme
+                            tabCaseStatique[ligne.indexOf(String.valueOf(c))][y] = new SuperPacGomme();
+                            break;
+                    }
+                }
+                y++;
+            }
+            buffer.close();
+        }catch(Exception e) {
+            return false;
+        }
+        return true;
+    }
+    
 }
