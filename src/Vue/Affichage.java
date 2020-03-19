@@ -6,6 +6,7 @@
 package Vue;
 
 import Modele.Case.Mur;
+import Modele.Configuration;
 import Modele.Entite.Fantome;
 import Modele.Entite.PacMan;
 import Modele.Grille.Grille;
@@ -47,7 +48,7 @@ public class Affichage extends Application implements Observer {
     public void start(Stage primaryStage) {
 
 
-        Image imIcon = new Image("assets/icon.png",IMG_WIDTH,IMG_HEIGHT,false,false);
+        Image imIcon = new Image(Configuration.PATH_TO_IMG + "icon.png",IMG_WIDTH,IMG_HEIGHT,false,false);
 
         //A remplacer par grille custom dès que possible
         GridPane grid = new GridPane();
