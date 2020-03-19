@@ -7,10 +7,16 @@ package Modele.Entite;
  */
 
 
+import javafx.scene.image.Image;
+
 /**
  *
  * @author Epulapp
  */
 public class PacMan extends Entite {
-    
+    private final static Image imPacman = new Image("assets/Pacman.png");
+
+    public static Image getImPacman() {
+        return imPacman;
+    }
 }

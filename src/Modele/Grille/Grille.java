@@ -17,7 +17,7 @@ import javafx.geometry.Point2D;
 public class Grille {
     private CaseStatique[][] tabCaseStatique;
     private Dictionary<Modele.Entite.Entite, Point2D> tabEntites;
-    
+
     public boolean depOk(String dep, Modele.Entite.Entite e){
         return false;
     }

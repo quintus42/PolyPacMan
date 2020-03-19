@@ -5,10 +5,17 @@
  */
 package Modele.Case;
 
+import javafx.scene.image.Image;
+
 /**
  *
  * @author Epulapp
  */
 public class SuperPacGomme extends Couloir {
-    
+
+    private final static Image imSuperPacGomme = new Image("assets/SuperPacGomme.png");
+
+    public static Image getImSuperPacGomme() {
+        return imSuperPacGomme;
+    }
 }
