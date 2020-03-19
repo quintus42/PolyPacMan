@@ -166,8 +166,11 @@ public class Affichage extends Application {
                     tab[i][j].setImage(pm.getImPacman());
                 }
                 else if(maGrille.tabPosition.get(new Point(i,j)) instanceof Fantome){
-                    // A retoucher pour s'adapter au fantome rencontré !
-                    tab[i][j].setImage(oGhost.getImGhost());
+                    Fantome ghost = (Fantome) maGrille.tabPosition.get(new Point(i,j));
+                    tab[i][j].setImage(ghost.getImGhost());
+                }
+                else{
+                    tab[i][j].setImage(null);
                 }
                 tab[i][j].setFitWidth(Configuration.IMG_WIDTH);
                 tab[i][j].setFitHeight(Configuration.IMG_HEIGHT);
@@ -197,7 +200,8 @@ public class Affichage extends Application {
                 tab[v.getX()][v.getY()].setImage(pm.getImPacman());
             }
             else if (k instanceof Fantome){
-                tab[v.getX()][v.getY()].setImage(rGhost.getImGhost());
+                Fantome ghost = (Fantome) k;
+                tab[v.getX()][v.getY()].setImage(ghost.getImGhost());
             }
             tab[v.getX()][v.getY()].setFitWidth(Configuration.IMG_WIDTH);
             tab[v.getX()][v.getY()].setFitHeight(Configuration.IMG_HEIGHT);
