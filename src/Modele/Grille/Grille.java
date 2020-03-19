@@ -53,23 +53,23 @@ public class Grille extends Observable implements Runnable{
         
         //Blinky
         position = new Point(8,10);
-        tabEntites.put(new Modele.Entite.Fantome(), position);
-        tabPosition.put(position, new Modele.Entite.Fantome());
+        tabEntites.put(new Modele.Entite.Blinky(), position);
+        tabPosition.put(position, new Modele.Entite.Blinky());
         
         //Pinky
         position = new Point(9,10);
-        tabEntites.put(new Modele.Entite.Fantome(), position);
-        tabPosition.put(position, new Modele.Entite.Fantome());
+        tabEntites.put(new Modele.Entite.Pinky(), position);
+        tabPosition.put(position, new Modele.Entite.Pinky());
         
         //Inky
         position = new Point(10,10);
-        tabEntites.put(new Modele.Entite.Fantome(), position);
-        tabPosition.put(position, new Modele.Entite.Fantome());
+        tabEntites.put(new Modele.Entite.Inky(), position);
+        tabPosition.put(position, new Modele.Entite.Inky());
         
         //Clyde
         position = new Point(11,10);
-        tabEntites.put(new Modele.Entite.Fantome(), position);
-        tabPosition.put(position, new Modele.Entite.Fantome());
+        tabEntites.put(new Modele.Entite.Clyde(), position);
+        tabPosition.put(position, new Modele.Entite.Clyde());
         
     }
     
