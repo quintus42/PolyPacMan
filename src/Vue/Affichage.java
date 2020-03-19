@@ -79,6 +79,40 @@ public class Affichage extends Application {
         primaryStage.setTitle("Pacman");
         primaryStage.setScene(scene);
         primaryStage.show();
+
+        root.setOnKeyPressed(new EventHandler<javafx.scene.input.KeyEvent>() { // on écoute le clavier
+
+
+            @Override
+            public void handle(javafx.scene.input.KeyEvent event) {
+                switch(event.getCode()){
+                    case Z :
+                        maGrille.changerDirectionPacman(Direction.HAUT);
+                        break;
+                    case UP :
+                        maGrille.changerDirectionPacman(Direction.HAUT);
+                        break;
+                    case Q :
+                        maGrille.changerDirectionPacman(Direction.GAUCHE);
+                        break;
+                    case LEFT :
+                        maGrille.changerDirectionPacman(Direction.GAUCHE);
+                        break;
+                    case S :
+                        maGrille.changerDirectionPacman(Direction.BAS);
+                        break;
+                    case DOWN :
+                        maGrille.changerDirectionPacman(Direction.BAS);
+                        break;
+                    case D :
+                        maGrille.changerDirectionPacman(Direction.DROITE);
+                        break;
+                    case RIGHT :
+                        maGrille.changerDirectionPacman(Direction.DROITE);
+                        break;
+                }
+            }
+        });
     }
 
     Observer o =  new Observer() { // l'observer observe l'obervable (update est exécuté dès notifyObservers() est appelé côté modèle )
@@ -112,43 +146,6 @@ public class Affichage extends Application {
             }
         }
     }
-     
-        root.setOnKeyPressed(new EventHandler<javafx.scene.input.KeyEvent>() { // on écoute le clavier
-            
-
-            @Override
-            public void handle(javafx.scene.input.KeyEvent event) {
-                switch(event.getCode()){
-                    case Z :
-                        maGrille.changerDirectionPacman(Direction.HAUT);
-                        break;
-                    case UP :
-                        maGrille.changerDirectionPacman(Direction.HAUT);
-                        break;
-                    case Q :
-                        maGrille.changerDirectionPacman(Direction.GAUCHE);
-                        break;
-                    case LEFT :
-                        maGrille.changerDirectionPacman(Direction.GAUCHE);
-                        break;
-                    case S :
-                        maGrille.changerDirectionPacman(Direction.BAS);
-                        break;
-                    case DOWN :
-                        maGrille.changerDirectionPacman(Direction.BAS);
-                        break;
-                    case D :
-                        maGrille.changerDirectionPacman(Direction.DROITE);
-                        break;
-                    case RIGHT :
-                        maGrille.changerDirectionPacman(Direction.DROITE);
-                        break;
-                }
-            }
-        });
-
-    }
-
     /**
      * @param args the command line arguments
      */
