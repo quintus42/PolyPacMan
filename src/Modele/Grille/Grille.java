@@ -145,14 +145,14 @@ public class Grille extends Observable implements Runnable{
     private Point gestionBordGrille(Point position) {
         
         if (position.getX() < 0) {
-            position.setX(Configuration.LARGEUR_GRILLE);
-        }else if(position.getX() > Configuration.LARGEUR_GRILLE){
+            position.setX(Configuration.LARGEUR_GRILLE-1);
+        }else if(position.getX() > Configuration.LARGEUR_GRILLE-1){
             position.setX(0);
         }
         
         if (position.getY() < 0) {
-            position.setY(Configuration.HAUTEUR_GRILLE);
-        }else if(position.getY() > Configuration.HAUTEUR_GRILLE){
+            position.setY(Configuration.HAUTEUR_GRILLE-1);
+        }else if(position.getY() > Configuration.HAUTEUR_GRILLE-1){
             position.setY(0);
         }
         
@@ -211,28 +211,37 @@ public class Grille extends Observable implements Runnable{
     
     private void deplacementEntite(Entite e) {
         Point oldPos = tabEntites.get(e);
+        Point newPos = null;
         switch(e.direction){
             case HAUT:
-                tabEntites.replace(e, oldPos, oldPos.add(0, -e.vitesse));
-                replacePacManTabPosition(e, oldPos, e, oldPos.add(0, -e.vitesse));
+                newPos = oldPos.add(0, -e.vitesse);
+                newPos = gestionBordGrille(newPos);
+                tabEntites.replace(e, oldPos, newPos);
+                replacePacManTabPosition(e, oldPos, e, newPos);
                 //tabPosition.remove(oldPos);
                 //tabPosition.put(oldPos.add(0, -e.vitesse), e);
                 break;
             case BAS:
-                tabEntites.replace(e, oldPos, oldPos.add(0, e.vitesse));
-                replacePacManTabPosition(e, oldPos, e, oldPos.add(0, e.vitesse));
+                newPos = oldPos.add(0, e.vitesse);
+                newPos = gestionBordGrille(newPos);
+                tabEntites.replace(e, oldPos, newPos);
+                replacePacManTabPosition(e, oldPos, e, newPos);
                 //tabPosition.remove(oldPos);
                 //tabPosition.put(oldPos.add(0, e.vitesse), e);
                 break;
             case DROITE:
-                tabEntites.replace(e, oldPos, oldPos.add(e.vitesse, 0));
-                replacePacManTabPosition(e, oldPos, e, oldPos.add(e.vitesse, 0));
+                newPos = oldPos.add(e.vitesse, 0);
+                newPos = gestionBordGrille(newPos);
+                tabEntites.replace(e, oldPos, newPos);
+                replacePacManTabPosition(e, oldPos, e, newPos);
                 //tabPosition.remove(oldPos);
                 //tabPosition.put(oldPos.add(e.vitesse, 0), e);
                 break;
             case GAUCHE:
-                tabEntites.replace(e, oldPos, oldPos.add(-e.vitesse, 0));
-                replacePacManTabPosition(e, oldPos, e, oldPos.add(-e.vitesse, 0));
+                newPos = oldPos.add(-e.vitesse, 0);
+                newPos = gestionBordGrille(newPos);
+                tabEntites.replace(e, oldPos, newPos);
+                replacePacManTabPosition(e, oldPos, e, newPos);
                 //tabPosition.remove(oldPos);
                 //tabPosition.put(oldPos.add(-e.vitesse, 0), e);
                 break;
