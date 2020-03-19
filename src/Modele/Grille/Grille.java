@@ -6,6 +6,7 @@
 package Modele.Grille;
 
 import Modele.Case.CaseStatique;
+import Modele.Configuration;
 import Modele.Entite.Entite;
 import Modele.Entite.PacMan;
 import java.util.Dictionary;
@@ -23,11 +24,7 @@ import javafx.util.Pair;
  * @author Epulapp
  */
 public class Grille extends Observable implements Runnable{
-    
-    private final int HAUTEUR_GRILLE = 21; // Y
-    private final int LARGEUR_GRILLE = 20; // X
 
-    
     private CaseStatique[][] tabCaseStatique;
     private HashMap<Modele.Entite.Entite, Point> tabEntites;
     private HashMap<Point, Modele.Entite.Entite> tabPosition;
@@ -36,7 +33,7 @@ public class Grille extends Observable implements Runnable{
     private boolean jeuEnPause = false;
     
     public Grille(){
-        tabCaseStatique = new CaseStatique[LARGEUR_GRILLE][HAUTEUR_GRILLE];
+        tabCaseStatique = new CaseStatique[Configuration.LARGEUR_GRILLE][Configuration.HAUTEUR_GRILLE];
         tabEntites = new HashMap<Modele.Entite.Entite, Point>();
         tabPosition = new HashMap<Point, Modele.Entite.Entite>();
 
@@ -109,14 +106,14 @@ public class Grille extends Observable implements Runnable{
     private Point gestionBordGrille(Point position) {
         
         if (position.getX() < 0) {
-            position.setX(LARGEUR_GRILLE);
-        }else if(position.getX() > LARGEUR_GRILLE){
+            position.setX(Configuration.LARGEUR_GRILLE);
+        }else if(position.getX() > Configuration.LARGEUR_GRILLE){
             position.setX(0);
         }
         
         if (position.getY() < 0) {
-            position.setY(HAUTEUR_GRILLE);
-        }else if(position.getY() > HAUTEUR_GRILLE){
+            position.setY(Configuration.HAUTEUR_GRILLE);
+        }else if(position.getY() > Configuration.HAUTEUR_GRILLE){
             position.setY(0);
         }
         

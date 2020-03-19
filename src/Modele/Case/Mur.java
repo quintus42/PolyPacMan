@@ -5,6 +5,7 @@
  */
 package Modele.Case;
 
+import Modele.Configuration;
 import javafx.scene.image.Image;
 
 /**
@@ -14,11 +15,11 @@ import javafx.scene.image.Image;
 public class Mur extends CaseStatique {
 
 
-    private final String PATH_TO_IMG = "file:src/assets/";
-    private final Image imFullWall = new Image(PATH_TO_IMG + "FullWall.png");
-    private final Image imFullWallWithHoles = new Image(PATH_TO_IMG + "FullWidthWithHoles.png");;
-    private final Image imLargeWall = new Image(PATH_TO_IMG + "LargeWall.png");
-    private final Image imLongWall = new Image(PATH_TO_IMG + "LongWall.png");
+
+    private final Image imFullWall = new Image(Configuration.PATH_TO_IMG + "FullWall.png");
+    private final Image imFullWallWithHoles = new Image(Configuration.PATH_TO_IMG + "FullWidthWithHoles.png");;
+    private final Image imLargeWall = new Image(Configuration.PATH_TO_IMG + "LargeWall.png");
+    private final Image imLongWall = new Image(Configuration.PATH_TO_IMG + "LongWall.png");
 
     public Mur (){
     }

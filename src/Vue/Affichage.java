@@ -33,9 +33,7 @@ public class Affichage extends Application implements Observer {
 
     private final int IMG_HEIGHT = 45;
 
-    @Override
-    public void start(Stage primaryStage) {
-
+    public void initialisationModele (){
         //Initialisation des modèles
         PacMan pm = new PacMan();
         Fantome rGhost = new Fantome();
@@ -43,7 +41,10 @@ public class Affichage extends Application implements Observer {
         Fantome bGhost = new Fantome();
         Fantome oGhost = new Fantome();
         Mur wall = new Mur();
-
+        Grille maGrille = new Grille();
+    }
+    @Override
+    public void start(Stage primaryStage) {
 
 
         Image imIcon = new Image("assets/icon.png",IMG_WIDTH,IMG_HEIGHT,false,false);

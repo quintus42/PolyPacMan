@@ -5,6 +5,7 @@
  */
 package Modele.Case;
 
+import Modele.Configuration;
 import javafx.scene.image.Image;
 
 /**
@@ -13,7 +14,7 @@ import javafx.scene.image.Image;
  */
 public class SuperPacGomme extends Couloir {
 
-    private final static Image imSuperPacGomme = new Image("assets/SuperPacGomme.png");
+    private final static Image imSuperPacGomme = new Image(Configuration.PATH_TO_IMG + "SuperPacGomme.png");
 
     public static Image getImSuperPacGomme() {
         return imSuperPacGomme;
