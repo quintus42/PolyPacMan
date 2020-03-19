@@ -20,4 +20,8 @@ public class PacMan extends Entite {
     public Image getImPacman() {
         return imPacman;
     }
+    
+    public PacMan(){
+        super();
+    }
 }

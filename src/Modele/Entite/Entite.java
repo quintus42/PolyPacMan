@@ -12,4 +12,9 @@ package Modele.Entite;
 public abstract class Entite {
     public Direction direction;
     public int vitesse;
+    
+    public Entite(){
+        this.direction = Direction.AUCUNE;
+        this.vitesse = 1;
+    }
 }

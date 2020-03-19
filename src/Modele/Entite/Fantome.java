@@ -35,4 +35,8 @@ public class Fantome extends Entite{
     public static Image getImPinkGhost() {
         return imPinkGhost;
     }
+    
+    public Fantome(){
+        super();
+    }
 }

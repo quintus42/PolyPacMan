@@ -14,6 +14,7 @@ import Modele.Entite.Direction;
 import Modele.Entite.Fantome;
 import Modele.Entite.PacMan;
 import Modele.Grille.Grille;
+import Modele.Grille.Point;
 import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -58,10 +59,11 @@ public class Affichage extends Application {
 
     @Override
     public void start(Stage primaryStage) {
+        
+        maGrille = new Grille();
 
         //Ajout des items à la grille
-        StackPane root = new StackPane();
-        root.getChildren().add(grid); //Ajout de la grille
+        StackPane root = new StackPane();//Ajout de la grille
 
         // initialisation de la grille (sans image)
         for (int i = 0; i < size_x; i++) {
@@ -74,53 +76,68 @@ public class Affichage extends Application {
 
         setGridImg();
 
+        root.getChildren().add(grid); 
         Scene scene = new Scene(root, Configuration.WINDOW_WIDTH, Configuration.WINDOW_HEIGTH, Paint.valueOf("Black"));
         primaryStage.getIcons().add(imIcon);
         primaryStage.setTitle("Pacman");
         primaryStage.setScene(scene);
         primaryStage.show();
+        
+        try {
+            root.setOnKeyPressed(new EventHandler<javafx.scene.input.KeyEvent>() { // on écoute le clavier
 
-        root.setOnKeyPressed(new EventHandler<javafx.scene.input.KeyEvent>() { // on écoute le clavier
 
-
-            @Override
-            public void handle(javafx.scene.input.KeyEvent event) {
-                switch(event.getCode()){
-                    case Z :
-                        maGrille.changerDirectionPacman(Direction.HAUT);
-                        break;
-                    case UP :
-                        maGrille.changerDirectionPacman(Direction.HAUT);
-                        break;
-                    case Q :
-                        maGrille.changerDirectionPacman(Direction.GAUCHE);
-                        break;
-                    case LEFT :
-                        maGrille.changerDirectionPacman(Direction.GAUCHE);
-                        break;
-                    case S :
-                        maGrille.changerDirectionPacman(Direction.BAS);
-                        break;
-                    case DOWN :
-                        maGrille.changerDirectionPacman(Direction.BAS);
-                        break;
-                    case D :
-                        maGrille.changerDirectionPacman(Direction.DROITE);
-                        break;
-                    case RIGHT :
-                        maGrille.changerDirectionPacman(Direction.DROITE);
-                        break;
+                @Override
+                public void handle(javafx.scene.input.KeyEvent event) {
+                    switch(event.getCode()){
+                        case Z :
+                            maGrille.changerDirectionPacman(Direction.HAUT);
+                            break;
+                        case UP :
+                            maGrille.changerDirectionPacman(Direction.HAUT);
+                            break;
+                        case Q :
+                            maGrille.changerDirectionPacman(Direction.GAUCHE);
+                            break;
+                        case LEFT :
+                            maGrille.changerDirectionPacman(Direction.GAUCHE);
+                            break;
+                        case S :
+                            maGrille.changerDirectionPacman(Direction.BAS);
+                            break;
+                        case DOWN :
+                            maGrille.changerDirectionPacman(Direction.BAS);
+                            break;
+                        case D :
+                            maGrille.changerDirectionPacman(Direction.DROITE);
+                            break;
+                        case RIGHT :
+                            maGrille.changerDirectionPacman(Direction.DROITE);
+                            break;
+                        case N :
+                            maGrille.lireGrilleFichier();
+                            break;
+                    }
                 }
-            }
-        });
-    }
+            });
 
-    Observer o =  new Observer() { // l'observer observe l'obervable (update est exécuté dès notifyObservers() est appelé côté modèle )
-        @Override
-        public void update(Observable o, Object arg) {
-            setGridImg();
+            Observer o =  new Observer() { // l'observer observe l'obervable (update est exécuté dès notifyObservers() est appelé côté modèle )
+                @Override
+                public void update(Observable o, Object arg) {
+                    setGridImg();
+                    setGridEntityImg();
+                }
+            };
+            
+            maGrille.addObserver(o);
+            maGrille.start();
+            
+            grid.requestFocus();
+            
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
         }
-    };
+    }
 
     //Affiche les images correspondantes au type de case présente dans le tableau
     private void setGridImg(){
@@ -131,6 +148,7 @@ public class Affichage extends Application {
                 }
                 else if (maGrille.tabCaseStatique[i][j] instanceof Couloir){
                     //Rien à ajouter parce que les couloir c'est noir
+                    tab[i][j].setImage(null);
                 }
                 else if (maGrille.tabCaseStatique[i][j] instanceof PacGomme) {
                     tab[i][j].setImage(pg.getImPacGomme());
@@ -146,6 +164,37 @@ public class Affichage extends Application {
             }
         }
     }
+    
+    private void setGridEntityImg(){
+//        maGrille.tabEntites.forEach((k, v) -> {
+//            if(k instanceof PacMan) {
+//                tab[v.getX()][v.getY()].setImage(pm.getImPacman());
+//            }
+//            else if (k instanceof Fantome){
+//                tab[v.getX()][v.getY()].setImage(Fantome.getImBlueGhost());
+//            }
+//            tab[v.getX()][v.getY()].setFitWidth(Configuration.IMG_WIDTH);
+//            tab[v.getX()][v.getY()].setFitHeight(Configuration.IMG_HEIGHT);
+//            tab[v.getX()][v.getY()].setPreserveRatio(true);
+//            tab[v.getX()][v.getY()].setSmooth(true);
+//            tab[v.getX()][v.getY()].setCache(true);
+//        });
+        maGrille.tabPosition.forEach((v, k) -> {
+            if(k instanceof PacMan) {
+                tab[v.getX()][v.getY()].setImage(pm.getImPacman());
+            }
+            else if (k instanceof Fantome){
+                tab[v.getX()][v.getY()].setImage(Fantome.getImBlueGhost());
+            }
+            tab[v.getX()][v.getY()].setFitWidth(Configuration.IMG_WIDTH);
+            tab[v.getX()][v.getY()].setFitHeight(Configuration.IMG_HEIGHT);
+            tab[v.getX()][v.getY()].setPreserveRatio(true);
+            tab[v.getX()][v.getY()].setSmooth(true);
+            tab[v.getX()][v.getY()].setCache(true);
+        });
+    }
+    
+    
     /**
      * @param args the command line arguments
      */
