@@ -37,7 +37,9 @@ public class Grille extends Observable implements Runnable{
     
     public Grille(){
         tabCaseStatique = new CaseStatique[LARGEUR_GRILLE][HAUTEUR_GRILLE];
-        
+        tabEntites = new HashMap<Modele.Entite.Entite, Point>();
+        tabPosition = new HashMap<Point, Modele.Entite.Entite>();
+
         Point position;
         
         //Pacman
