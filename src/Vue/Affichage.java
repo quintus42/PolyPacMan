@@ -10,6 +10,7 @@ import Modele.Case.Mur;
 import Modele.Case.PacGomme;
 import Modele.Case.SuperPacGomme;
 import Modele.Configuration;
+import Modele.Entite.Direction;
 import Modele.Entite.Fantome;
 import Modele.Entite.PacMan;
 import Modele.Grille.Grille;
@@ -26,6 +27,7 @@ import javafx.scene.paint.Paint;
 import javafx.stage.Stage;
 import java.util.Observable;
 import java.util.Observer;
+import javafx.scene.input.KeyCode;
 
 /**
  *
@@ -90,7 +92,6 @@ public class Affichage extends Application {
     private void setGridImg(){
         for (int i = 0; i < size_x ; i++) {
             for (int j = 0; j < size_y; j++) {
-
                 if(maGrille.tabCaseStatique[i][j] instanceof Mur) {
                     tab[i][j].setImage(wall.getImFullWall());
                 }
@@ -110,6 +111,42 @@ public class Affichage extends Application {
                 tab[i][j].setCache(true);
             }
         }
+    }
+     
+        root.setOnKeyPressed(new EventHandler<javafx.scene.input.KeyEvent>() { // on écoute le clavier
+            
+
+            @Override
+            public void handle(javafx.scene.input.KeyEvent event) {
+                switch(event.getCode()){
+                    case Z :
+                        maGrille.changerDirectionPacman(Direction.HAUT);
+                        break;
+                    case UP :
+                        maGrille.changerDirectionPacman(Direction.HAUT);
+                        break;
+                    case Q :
+                        maGrille.changerDirectionPacman(Direction.GAUCHE);
+                        break;
+                    case LEFT :
+                        maGrille.changerDirectionPacman(Direction.GAUCHE);
+                        break;
+                    case S :
+                        maGrille.changerDirectionPacman(Direction.BAS);
+                        break;
+                    case DOWN :
+                        maGrille.changerDirectionPacman(Direction.BAS);
+                        break;
+                    case D :
+                        maGrille.changerDirectionPacman(Direction.DROITE);
+                        break;
+                    case RIGHT :
+                        maGrille.changerDirectionPacman(Direction.DROITE);
+                        break;
+                }
+            }
+        });
+
     }
 
     /**
