@@ -11,8 +11,12 @@ import Modele.Case.Mur;
 import Modele.Case.PacGomme;
 import Modele.Case.SuperPacGomme;
 import Modele.Configuration;
+import Modele.Entite.Blinky;
+import Modele.Entite.Clyde;
 import Modele.Entite.Entite;
+import Modele.Entite.Inky;
 import Modele.Entite.PacMan;
+import Modele.Entite.Pinky;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.util.Dictionary;
@@ -53,23 +57,37 @@ public class Grille extends Observable implements Runnable{
         
         //Blinky
         position = new Point(8,10);
-        tabEntites.put(new Modele.Entite.Blinky(), position);
-        tabPosition.put(position, new Modele.Entite.Blinky());
+        Blinky blinky = new Blinky();
+        tabEntites.put(blinky, position);
+        tabPosition.put(position, blinky);
         
         //Pinky
         position = new Point(9,10);
-        tabEntites.put(new Modele.Entite.Pinky(), position);
-        tabPosition.put(position, new Modele.Entite.Pinky());
+        Pinky pinky = new Pinky();
+        tabEntites.put(pinky, position);
+        tabPosition.put(position, pinky);
         
         //Inky
         position = new Point(10,10);
-        tabEntites.put(new Modele.Entite.Inky(), position);
-        tabPosition.put(position, new Modele.Entite.Inky());
+        Inky inky = new Inky();
+        tabEntites.put(inky, position);
+        tabPosition.put(position, inky);
         
         //Clyde
         position = new Point(11,10);
-        tabEntites.put(new Modele.Entite.Clyde(), position);
-        tabPosition.put(position, new Modele.Entite.Clyde());
+        Clyde clyde = new Clyde();
+        tabEntites.put(clyde, position);
+        tabPosition.put(position, clyde);
+        
+        Thread tClyde = new Thread(clyde);
+        Thread tPinky = new Thread(pinky);
+        Thread tInky = new Thread(inky);
+        Thread tBlinky = new Thread(blinky);
+        
+        tClyde.start();
+        tPinky.start();
+        tInky.start();
+        tBlinky.start();
         
     }
     
@@ -108,7 +126,7 @@ public class Grille extends Observable implements Runnable{
                 = iterator.next(); 
   
             // Check if this key is the required key 
-            if (position.equals(entry.getKey())) { 
+            if (position.equals(entry.getKey()) && (e instanceof PacMan || entry.getValue() instanceof PacMan)) { 
   
                 isKeyPresent = true; 
             } 

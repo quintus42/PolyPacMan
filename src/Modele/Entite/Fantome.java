@@ -6,6 +6,8 @@
 package Modele.Entite;
 
 import Modele.Configuration;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.scene.image.Image;
 
 /**
@@ -13,7 +15,7 @@ import javafx.scene.image.Image;
  * @author Epulapp
  */
 
-public class Fantome extends Entite{
+public class Fantome extends Entite implements Runnable{
 
     private Image imGhost;
 
@@ -23,5 +25,39 @@ public class Fantome extends Entite{
     
     public Fantome(){
         super();
+    }
+    
+    public void changerDirection(){
+        int dir = (int) (Math.random() * 4);
+            switch(dir){
+                case 0:
+                    this.direction =  Direction.HAUT;
+                    return;
+                case 1:
+                    this.direction =  Direction.BAS;
+                    return;
+                case 2:
+                    this.direction =  Direction.GAUCHE;
+                    return;
+                case 3:
+                    this.direction =  Direction.DROITE;
+                    return;
+                case 4:
+                    this.direction =  Direction.AUCUNE;
+                    return;
+            }
+            this.direction = Direction.AUCUNE;
+    }
+
+    @Override
+    public void run() {
+        while (true) {            
+            try {
+                Thread.sleep(500);
+            } catch (InterruptedException ex) {
+                Logger.getLogger(Fantome.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            changerDirection();
+        }
     }
 }
