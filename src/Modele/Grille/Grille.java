@@ -17,7 +17,6 @@ import Modele.Entite.Entite;
 import Modele.Entite.Inky;
 import Modele.Entite.PacMan;
 import Modele.Entite.Pinky;
-import com.sun.javaws.ui.ApplicationIconGenerator;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.util.Dictionary;
@@ -42,11 +41,13 @@ public class Grille extends Observable implements Runnable{
     public HashMap<Point, Modele.Entite.Entite> tabPosition;
     public boolean partieEnCours = false;
     private boolean superPacGomme = false;
-    private boolean jeuEnPause = false;
+    public boolean jeuEnPause = false;
     private Thread tInky;
     private Thread tPinky;
     private Thread tBlinky;
     private Thread tClyde;
+    
+    private Thread tPartie;
     
     public Grille(){
         tabCaseStatique = new CaseStatique[Configuration.LARGEUR_GRILLE][Configuration.HAUTEUR_GRILLE];
@@ -327,13 +328,15 @@ public class Grille extends Observable implements Runnable{
     }
     
     public void start() {
-        new Thread(this).start();
+        tPartie = new Thread(this);
+        tPartie.start();
     }
     
     public void stop(){
         while (partieEnCours) {            
             partieEnCours = false;
         }
+        tPartie.stop();
     }
 
     @Override

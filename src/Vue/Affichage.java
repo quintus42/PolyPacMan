@@ -113,12 +113,20 @@ public class Affichage extends Application {
                             pm.rotation = 0;
                             pm.scaling = 1;
                             break;
+                        case P :
+                            if (maGrille.jeuEnPause) {
+                                maGrille.unPauseGame();
+                            }else{
+                                maGrille.pauseGame();
+                            }
+                            break;
                         case N :
                             maGrille.changerDirectionPacman(Direction.AUCUNE);
                             pm.rotation = 0;
                             pm.scaling = 1;
                             if (maGrille.partieEnCours) {
                                 maGrille.stop();
+                                maGrille.lireGrilleFichier(Configuration.CHEMIN_FICHIER_CUSTOMMAP);
                                 maGrille.start();
                             }else{
                                 maGrille.lireGrilleFichier(Configuration.CHEMIN_FICHIER_CUSTOMMAP);
