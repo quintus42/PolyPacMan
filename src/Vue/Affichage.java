@@ -117,10 +117,11 @@ public class Affichage extends Application {
                         case N :
                             maGrille.changerDirectionPacman(Direction.AUCUNE);
                             if (maGrille.partieEnCours) {
-                                maGrille.lireGrilleFichier();
-                            }else{
+                                maGrille.stop();
                                 maGrille.start();
-                                maGrille.lireGrilleFichier();
+                            }else{
+                                maGrille.lireGrilleFichier(Configuration.CHEMIN_FICHIER_CUSTOMMAP);
+                                maGrille.start();
                             }
                             break;
                     }
@@ -136,7 +137,6 @@ public class Affichage extends Application {
             };
             
             maGrille.addObserver(o);
-            maGrille.start();
             
             grid.requestFocus();
             
@@ -152,15 +152,31 @@ public class Affichage extends Application {
                 if(maGrille.tabCaseStatique[i][j] instanceof Mur) {
                     tab[i][j].setImage(wall.getImFullWall());
                 }
-                else if (maGrille.tabCaseStatique[i][j] instanceof Couloir){
+                else{
                     //Rien à ajouter parce que les couloir c'est noir
                     tab[i][j].setImage(null);
                 }
-                else if (maGrille.tabCaseStatique[i][j] instanceof PacGomme) {
-                    tab[i][j].setImage(pg.getImPacGomme());
+                if (maGrille.tabCaseStatique[i][j] instanceof PacGomme) {
+                    Point posPacman = maGrille.getPositionPacman();
+                    if (posPacman.equals(new Point(i, j))) {
+                        ((Couloir)(maGrille.tabCaseStatique[i][j])).mangee = true;
+                    }
+                    if (((Couloir)(maGrille.tabCaseStatique[i][j])).mangee) {
+                        tab[i][j].setImage(null);
+                    }else{
+                        tab[i][j].setImage(pg.getImPacGomme());
+                    }
                 }
                 else if (maGrille.tabCaseStatique[i][j] instanceof SuperPacGomme){
-                    tab[i][j].setImage(spg.getImSuperPacGomme());
+                    Point posPacman = maGrille.getPositionPacman();
+                    if (posPacman.equals(new Point(i, j))) {
+                        ((Couloir)(maGrille.tabCaseStatique[i][j])).mangee = true;
+                    }
+                    if (((Couloir)(maGrille.tabCaseStatique[i][j])).mangee) {
+                        tab[i][j].setImage(null);
+                    }else{
+                        tab[i][j].setImage(spg.getImSuperPacGomme());
+                    }
                 }
                 else if(maGrille.tabPosition.get(new Point(i,j)) instanceof PacMan){
                     tab[i][j].setImage(pm.getImPacman());
@@ -168,9 +184,6 @@ public class Affichage extends Application {
                 else if(maGrille.tabPosition.get(new Point(i,j)) instanceof Fantome){
                     Fantome ghost = (Fantome) maGrille.tabPosition.get(new Point(i,j));
                     tab[i][j].setImage(ghost.getImGhost());
-                }
-                else{
-                    tab[i][j].setImage(null);
                 }
                 tab[i][j].setFitWidth(Configuration.IMG_WIDTH);
                 tab[i][j].setFitHeight(Configuration.IMG_HEIGHT);
