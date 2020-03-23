@@ -115,6 +115,8 @@ public class Affichage extends Application {
                             break;
                         case N :
                             maGrille.changerDirectionPacman(Direction.AUCUNE);
+                            pm.rotation = 0;
+                            pm.scaling = 1;
                             if (maGrille.partieEnCours) {
                                 maGrille.lireGrilleFichier();
                             }else{
@@ -196,6 +198,11 @@ public class Affichage extends Application {
 //            tab[v.getX()][v.getY()].setCache(true);
 //        });
         maGrille.tabPosition.forEach((v, k) -> {
+            //A enelver pour les taiwip fantomes //
+            /////////////////////////////////////////////
+            tab[v.getX()][v.getY()].setRotate(0);
+            tab[v.getX()][v.getY()].setScaleX(1);
+            ////////////////////////////////////////////
             if(k instanceof PacMan) {
                 tab[v.getX()][v.getY()].setImage(pm.getImPacman());
                 tab[v.getX()][v.getY()].setRotate(pm.rotation);
