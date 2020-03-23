@@ -25,10 +25,30 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Paint;
 import javafx.stage.Stage;
 
-import java.awt.*;
+//import java.awt.*;
 import java.util.Observable;
 import java.util.Observer;
+import javafx.application.Platform;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.scene.Group;
+import javafx.scene.canvas.Canvas;
+import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.input.KeyCode;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundImage;
+import javafx.scene.layout.BackgroundPosition;
+import javafx.scene.layout.BackgroundRepeat;
+import javafx.scene.layout.BackgroundSize;
+import javafx.scene.layout.HBox;
+import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
+import javafx.scene.text.Text;
+import javafx.stage.StageStyle;
+import javafx.stage.WindowEvent;
+import jdk.nashorn.internal.runtime.regexp.joni.Config;
 
 /**
  *
@@ -36,6 +56,8 @@ import javafx.scene.input.KeyCode;
  */
 public class Affichage extends Application {
 
+    // <editor-fold defaultstate="collapsed" desc="Variables">
+    
     //Initialisation des modèles
     private PacMan pm = new PacMan();
     private PacGomme pg = new PacGomme();
@@ -54,11 +76,67 @@ public class Affichage extends Application {
     private int size_y = Configuration.HAUTEUR_GRILLE;
 
     private ImageView[][]tab = new ImageView[size_x][size_y];
+    
+    // </editor-fold>
 
     @Override
     public void start(Stage primaryStage) {
+        Group root = new Group();
+
+        primaryStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
+            @Override
+            public void handle(WindowEvent t) {
+                Platform.exit();
+                System.exit(0);
+            }
+        });
+
+        Button btnJouer = new Button("Jouer");
+        btnJouer.setMinSize(120, 30);
+        btnJouer.setOnAction(new EventHandler<ActionEvent>() {
+            @Override public void handle(ActionEvent e) {
+                //Stage st = new Stage(StageStyle.DECORATED);
+                lancerPartie(primaryStage);
+            }
+        });
+        Button btnQuitter = new Button("Quiter");
+        btnQuitter.setMinSize(120, 30);
+        btnQuitter.setOnAction(new EventHandler<ActionEvent>() {
+            @Override public void handle(ActionEvent e) {
+                Platform.exit();
+                System.exit(0);
+            }
+        });
         
+        Image image = new Image(Configuration.PATH_TO_IMG + "HomeMenu.jpg");
+        ImageView im = new ImageView(image);
+
+        StackPane stackPane = new StackPane();
+        stackPane.getChildren().addAll(im, btnJouer, btnQuitter); // hbox with button and text on top of image view
+        
+        stackPane.setAlignment(btnJouer, Pos.BOTTOM_CENTER);
+        stackPane.setAlignment(btnQuitter, Pos.BOTTOM_CENTER);
+        stackPane.setMargin(btnJouer, new Insets(0, 0, 100, 0));
+        stackPane.setMargin(btnQuitter, new Insets(0, 0, 60, 0));
+        
+        root.getChildren().add(stackPane);
+
+        Scene scene = new Scene(root, 405, 405, Paint.valueOf("Black"));
+        Image imIcon = new Image(Configuration.PATH_TO_IMG + "icon.png",Configuration.IMG_WIDTH,Configuration.IMG_HEIGHT,false,false);
+        primaryStage.getIcons().add(imIcon);
+        primaryStage.setTitle("Pacman");
+        primaryStage.setScene(scene);
+        primaryStage.show();
+        
+    }
+    
+    
+    
+    private void lancerPartie(Stage primaryStage){
+        tab = new ImageView[size_x][size_y];
         maGrille = new Grille();
+        
+        grid = new GridPane();
 
         //Ajout des items à la grille
         StackPane root = new StackPane();//Ajout de la grille
@@ -75,8 +153,8 @@ public class Affichage extends Application {
         setGridImg();
 
         root.getChildren().add(grid); 
+        root.setStyle("-fx-background-color: #808080;");
         Image imIcon = new Image(Configuration.PATH_TO_IMG + "icon.png",Configuration.IMG_WIDTH,Configuration.IMG_HEIGHT,false,false);
-
         Scene scene = new Scene(root, Configuration.WINDOW_WIDTH, Configuration.WINDOW_HEIGTH, Paint.valueOf("Black"));
         primaryStage.getIcons().add(imIcon);
         primaryStage.setTitle("Pacman");
@@ -89,6 +167,10 @@ public class Affichage extends Application {
                 @Override
                 public void handle(javafx.scene.input.KeyEvent event) {
                     switch(event.getCode()){
+                        case ESCAPE: 
+                            maGrille.stop();
+                            start(primaryStage);
+                            break;
                         case Z :
                         case UP :
                             maGrille.changerDirectionPacman(Direction.HAUT);
@@ -146,6 +228,8 @@ public class Affichage extends Application {
             };
             
             maGrille.addObserver(o);
+            maGrille.lireGrilleFichier(Configuration.CHEMIN_FICHIER_CUSTOMMAP);
+            maGrille.start();
             
             grid.requestFocus();
             
@@ -154,6 +238,8 @@ public class Affichage extends Application {
         }
     }
 
+    // <editor-fold defaultstate="collapsed" desc="View Update">
+    
     //Affiche les images correspondantes au type de case présente dans le tableau
     private void setGridImg(){
         for (int i = 0; i < size_x ; i++) {
@@ -242,6 +328,7 @@ public class Affichage extends Application {
         });
     }
     
+    // </editor-fold>
     
     /**
      * @param args the command line arguments

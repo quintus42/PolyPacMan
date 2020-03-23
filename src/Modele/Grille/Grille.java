@@ -49,17 +49,25 @@ public class Grille extends Observable implements Runnable{
     
     private Thread tPartie;
     
+    private Point posPacMan = new Point(0, 0);
+    
     public Grille(){
         tabCaseStatique = new CaseStatique[Configuration.LARGEUR_GRILLE][Configuration.HAUTEUR_GRILLE];
+
+        initialiserEntites();
+    }
+    
+    public void initialiserEntites(){
+        
         tabEntites = new HashMap<Modele.Entite.Entite, Point>();
         tabPosition = new HashMap<Point, Modele.Entite.Entite>();
-
+        
         Point position;
         
-        //Pacman
+        //PacMan
         position = new Point(1,1);
-        tabEntites.put(new Modele.Entite.PacMan(), position);
-        tabPosition.put(position, new Modele.Entite.PacMan());
+        tabEntites.put(new Modele.Entite.PacMan(), posPacMan);
+        tabPosition.put(posPacMan, new Modele.Entite.PacMan());
         
         //Blinky
         position = new Point(8,10);
@@ -89,12 +97,6 @@ public class Grille extends Observable implements Runnable{
         tPinky = new Thread(pinky);
         tInky = new Thread(inky);
         tBlinky = new Thread(blinky);
-        
-        tClyde.start();
-        tPinky.start();
-        tInky.start();
-        tBlinky.start();
-        
     }
     
     public boolean depOk(Modele.Entite.Entite e){
@@ -328,8 +330,15 @@ public class Grille extends Observable implements Runnable{
     }
     
     public void start() {
+        
+        initialiserEntites();
+        
         tPartie = new Thread(this);
         tPartie.start();
+        tClyde.start();
+        tPinky.start();
+        tInky.start();
+        tBlinky.start();
     }
     
     public void stop(){
@@ -337,6 +346,10 @@ public class Grille extends Observable implements Runnable{
             partieEnCours = false;
         }
         tPartie.stop();
+        tClyde.stop();
+        tPinky.stop();
+        tInky.stop();
+        tBlinky.stop();
     }
 
     @Override
@@ -402,6 +415,7 @@ public class Grille extends Observable implements Runnable{
                             tabCaseStatique[index][y] = new Couloir();
                             break;
                         case 'p' : //pacman on définit ici sa position !
+                            posPacMan = new Point(index, y);
                             tabCaseStatique[index][y] = new Couloir();
                             changerPositionEntite(new Point(index, y), "PacMan");
                             break;
