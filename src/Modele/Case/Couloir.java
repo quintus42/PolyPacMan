@@ -10,5 +10,5 @@ package Modele.Case;
  * @author Epulapp
  */
 public class Couloir extends CaseStatique {
-    
+    public boolean mangee = false;
 }

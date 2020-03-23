@@ -17,6 +17,7 @@ import Modele.Entite.Entite;
 import Modele.Entite.Inky;
 import Modele.Entite.PacMan;
 import Modele.Entite.Pinky;
+import com.sun.javaws.ui.ApplicationIconGenerator;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.util.Dictionary;
@@ -42,6 +43,10 @@ public class Grille extends Observable implements Runnable{
     public boolean partieEnCours = false;
     private boolean superPacGomme = false;
     private boolean jeuEnPause = false;
+    private Thread tInky;
+    private Thread tPinky;
+    private Thread tBlinky;
+    private Thread tClyde;
     
     public Grille(){
         tabCaseStatique = new CaseStatique[Configuration.LARGEUR_GRILLE][Configuration.HAUTEUR_GRILLE];
@@ -79,10 +84,10 @@ public class Grille extends Observable implements Runnable{
         tabEntites.put(clyde, position);
         tabPosition.put(position, clyde);
         
-        Thread tClyde = new Thread(clyde);
-        Thread tPinky = new Thread(pinky);
-        Thread tInky = new Thread(inky);
-        Thread tBlinky = new Thread(blinky);
+        tClyde = new Thread(clyde);
+        tPinky = new Thread(pinky);
+        tInky = new Thread(inky);
+        tBlinky = new Thread(blinky);
         
         tClyde.start();
         tPinky.start();
@@ -159,6 +164,23 @@ public class Grille extends Observable implements Runnable{
         }
         //return false;
     }
+    
+    public Point getPositionPacman(){
+        Iterator<HashMap.Entry<Point, Entite> > 
+            iterator = tabPosition.entrySet().iterator(); 
+  
+        while (iterator.hasNext()) { 
+  
+            HashMap.Entry<Point, Entite> 
+                entry 
+                = iterator.next(); 
+            
+            if (entry.getValue() instanceof PacMan) { 
+               return entry.getKey();
+            } 
+        }
+        return null;
+    }
 
     private Point gestionBordGrille(Point position) {
         
@@ -177,7 +199,7 @@ public class Grille extends Observable implements Runnable{
         return position;
     }
     
-    private void replacePacManTabPosition(Entite e, Point p, Entite newE, Point newP){
+    private void replaceEntiteTabPosition(Entite e, Point p, Entite newE, Point newP){
 //        tabPosition.forEach((k, v) -> {
 //            if (k == p || v == e) {
 //                tabPosition.remove(k, v);
@@ -191,7 +213,7 @@ public class Grille extends Observable implements Runnable{
     public void changerDirection(Entite e, Modele.Entite.Direction d){
         e.direction = d;
         tabEntites.replace(e, tabEntites.get(e));
-        replacePacManTabPosition(e, tabEntites.get(e), e, tabEntites.get(e));
+        replaceEntiteTabPosition(e, tabEntites.get(e), e, tabEntites.get(e));
         //tabPosition.replace(tabEntites.get(e), e);
     }
     
@@ -205,13 +227,13 @@ public class Grille extends Observable implements Runnable{
         if (e != null) {
             e.direction = d;
             tabEntites.replace(e, tabEntites.get(e));
-            replacePacManTabPosition(e, tabEntites.get(e), e, tabEntites.get(e));
+            replaceEntiteTabPosition(e, tabEntites.get(e), e, tabEntites.get(e));
             //tabPosition.remove(tabEntites.get(e));
             //tabPosition.put(tabEntites.get(e), e);
         }
     }
     
-     public void changerPositionPacman(Point p){
+    public void changerPositionPacman(Point p){
         Entite e = null;
         for(Entite ent: tabEntites.keySet()){
             if (ent instanceof PacMan) {
@@ -221,9 +243,47 @@ public class Grille extends Observable implements Runnable{
         if (e != null) {
             Point ancienPoint = tabEntites.get(e);
             tabEntites.replace(e, p);
-            replacePacManTabPosition(e, ancienPoint, e, p);
+            replaceEntiteTabPosition(e, ancienPoint, e, p);
             //tabPosition.remove(ancienPoint);
             //tabPosition.put(p, e);
+        }
+    }
+    
+    public void changerPositionEntite(Point p, String nom){
+        Entite e = null;
+        for(Entite ent: tabEntites.keySet()){
+            switch(nom){
+                case "PacMan":
+                    if (ent instanceof PacMan) {
+                        e = ent;
+                    }
+                    break;
+                case "Blinky":
+                    if (ent instanceof Blinky) {
+                        e = ent;
+                    }
+                    break;
+                case "Pinky":
+                    if (ent instanceof Pinky) {
+                        e = ent;
+                    }
+                    break;
+                case "Inky":
+                    if (ent instanceof Inky) {
+                        e = ent;
+                    }
+                    break;
+                case "Clyde":
+                    if (ent instanceof Clyde) {
+                        e = ent;
+                    }
+                    break;
+            }
+        }
+        if (e != null) {
+            Point ancienPoint = tabEntites.get(e);
+            tabEntites.replace(e, p);
+            replaceEntiteTabPosition(e, ancienPoint, e, p);;
         }
     }
     
@@ -235,7 +295,7 @@ public class Grille extends Observable implements Runnable{
                 newPos = oldPos.add(0, -e.vitesse);
                 newPos = gestionBordGrille(newPos);
                 tabEntites.replace(e, oldPos, newPos);
-                replacePacManTabPosition(e, oldPos, e, newPos);
+                replaceEntiteTabPosition(e, oldPos, e, newPos);
                 //tabPosition.remove(oldPos);
                 //tabPosition.put(oldPos.add(0, -e.vitesse), e);
                 break;
@@ -243,7 +303,7 @@ public class Grille extends Observable implements Runnable{
                 newPos = oldPos.add(0, e.vitesse);
                 newPos = gestionBordGrille(newPos);
                 tabEntites.replace(e, oldPos, newPos);
-                replacePacManTabPosition(e, oldPos, e, newPos);
+                replaceEntiteTabPosition(e, oldPos, e, newPos);
                 //tabPosition.remove(oldPos);
                 //tabPosition.put(oldPos.add(0, e.vitesse), e);
                 break;
@@ -251,7 +311,7 @@ public class Grille extends Observable implements Runnable{
                 newPos = oldPos.add(e.vitesse, 0);
                 newPos = gestionBordGrille(newPos);
                 tabEntites.replace(e, oldPos, newPos);
-                replacePacManTabPosition(e, oldPos, e, newPos);
+                replaceEntiteTabPosition(e, oldPos, e, newPos);
                 //tabPosition.remove(oldPos);
                 //tabPosition.put(oldPos.add(e.vitesse, 0), e);
                 break;
@@ -259,7 +319,7 @@ public class Grille extends Observable implements Runnable{
                 newPos = oldPos.add(-e.vitesse, 0);
                 newPos = gestionBordGrille(newPos);
                 tabEntites.replace(e, oldPos, newPos);
-                replacePacManTabPosition(e, oldPos, e, newPos);
+                replaceEntiteTabPosition(e, oldPos, e, newPos);
                 //tabPosition.remove(oldPos);
                 //tabPosition.put(oldPos.add(-e.vitesse, 0), e);
                 break;
@@ -269,28 +329,38 @@ public class Grille extends Observable implements Runnable{
     public void start() {
         new Thread(this).start();
     }
+    
+    public void stop(){
+        while (partieEnCours) {            
+            partieEnCours = false;
+        }
+    }
 
     @Override
     public void run() {
         partieEnCours = true;
         while(partieEnCours){
-            try {
-                Thread.sleep(100);
-            } catch (InterruptedException ex) {
-                Logger.getLogger(Grille.class.getName()).log(Level.SEVERE, null, ex);
-            }
-            
-            for (Modele.Entite.Entite e : tabEntites.keySet()) 
-            { 
-                if (!jeuEnPause) {
-                    if (depOk(e)) {
-                        deplacementEntite(e);
+            if (verifierVictoire()) {
+                return;
+            }else{
+                
+                try {
+                    Thread.sleep(100);
+                } catch (InterruptedException ex) {
+                    Logger.getLogger(Grille.class.getName()).log(Level.SEVERE, null, ex);
+                }
+
+                for (Modele.Entite.Entite e : tabEntites.keySet()) 
+                { 
+                    if (!jeuEnPause) {
+                        if (depOk(e)) {
+                            deplacementEntite(e);
+                        }
                     }
                 }
+                setChanged(); 
+                notifyObservers();
             }
-            
-            setChanged(); 
-            notifyObservers();
         }
     }
 
@@ -302,10 +372,10 @@ public class Grille extends Observable implements Runnable{
         jeuEnPause = false;
     }
     
-    public boolean lireGrilleFichier(){
+    public boolean lireGrilleFichier(String cheminFichier){
         try{
             partieEnCours = true;
-            BufferedReader buffer = new BufferedReader(new FileReader(Configuration.CHEMIN_FICHIER_CUSTOMMAP)); //on ouvre le fichier une première fois pour le nb de ligne
+            BufferedReader buffer = new BufferedReader(new FileReader(cheminFichier)); //on ouvre le fichier une première fois pour le nb de ligne
             String ligne;
             int nbLigne = 0;
             int ligneLength = 0;
@@ -330,9 +400,25 @@ public class Grille extends Observable implements Runnable{
                             break;
                         case 'p' : //pacman on définit ici sa position !
                             tabCaseStatique[index][y] = new Couloir();
-                            changerPositionPacman(new Point(index, y));
+                            changerPositionEntite(new Point(index, y), "PacMan");
                             break;
-                        case 'g' : //pac-gomme
+                        case '1' : //Inky
+                            tabCaseStatique[index][y] = new Couloir();
+                            changerPositionEntite(new Point(index, y), "Inky");
+                            break;
+                        case '2' : //Pinky
+                            tabCaseStatique[index][y] = new Couloir();
+                            changerPositionEntite(new Point(index, y), "Pinky");
+                            break;
+                        case '3' : //Blinky
+                            tabCaseStatique[index][y] = new Couloir();
+                            changerPositionEntite(new Point(index, y), "Blinky");
+                            break;
+                        case '4' : //Clyde
+                            tabCaseStatique[index][y] = new Couloir();
+                            changerPositionEntite(new Point(index, y), "Clyde");
+                            break;
+                        case 'g' : //super pac-gomme
                             tabCaseStatique[index][y] = new PacGomme();
                             break;
                         case 'G' : //super pac-gomme
@@ -349,6 +435,20 @@ public class Grille extends Observable implements Runnable{
         }catch(Exception e) {
             return false;
         }
+        return true;
+    }
+    
+    private boolean verifierVictoire(){
+        for (int i = 0; i < tabCaseStatique.length; i++) {
+            for (int j = 0; j < tabCaseStatique[i].length; j++) {
+                if (tabCaseStatique[i][j] instanceof PacGomme || tabCaseStatique[i][j] instanceof SuperPacGomme) {
+                    if (!((Couloir)tabCaseStatique[i][j]).mangee) {
+                        return false;
+                    }
+                }
+            }
+        }
+        partieEnCours = false;
         return true;
     }
     
