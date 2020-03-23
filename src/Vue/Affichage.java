@@ -86,33 +86,32 @@ public class Affichage extends Application {
         try {
             root.setOnKeyPressed(new EventHandler<javafx.scene.input.KeyEvent>() { // on écoute le clavier
 
-
                 @Override
                 public void handle(javafx.scene.input.KeyEvent event) {
                     switch(event.getCode()){
                         case Z :
-                            maGrille.changerDirectionPacman(Direction.HAUT);
-                            break;
                         case UP :
                             maGrille.changerDirectionPacman(Direction.HAUT);
+                            pm.rotation = -90;
+                            pm.scaling = 1;
                             break;
                         case Q :
-                            maGrille.changerDirectionPacman(Direction.GAUCHE);
-                            break;
                         case LEFT :
                             maGrille.changerDirectionPacman(Direction.GAUCHE);
+                            pm.rotation = 0;
+                            pm.scaling = -1;
                             break;
                         case S :
-                            maGrille.changerDirectionPacman(Direction.BAS);
-                            break;
                         case DOWN :
                             maGrille.changerDirectionPacman(Direction.BAS);
+                            pm.rotation = 90;
+                            pm.scaling = 1;
                             break;
                         case D :
-                            maGrille.changerDirectionPacman(Direction.DROITE);
-                            break;
                         case RIGHT :
                             maGrille.changerDirectionPacman(Direction.DROITE);
+                            pm.rotation = 0;
+                            pm.scaling = 1;
                             break;
                         case N :
                             maGrille.changerDirectionPacman(Direction.AUCUNE);
@@ -164,6 +163,7 @@ public class Affichage extends Application {
                 }
                 else if(maGrille.tabPosition.get(new Point(i,j)) instanceof PacMan){
                     tab[i][j].setImage(pm.getImPacman());
+
                 }
                 else if(maGrille.tabPosition.get(new Point(i,j)) instanceof Fantome){
                     Fantome ghost = (Fantome) maGrille.tabPosition.get(new Point(i,j));
@@ -198,10 +198,13 @@ public class Affichage extends Application {
         maGrille.tabPosition.forEach((v, k) -> {
             if(k instanceof PacMan) {
                 tab[v.getX()][v.getY()].setImage(pm.getImPacman());
+                tab[v.getX()][v.getY()].setRotate(pm.rotation);
+                tab[v.getX()][v.getY()].setScaleX(pm.scaling);
             }
             else if (k instanceof Fantome){
                 Fantome ghost = (Fantome) k;
                 tab[v.getX()][v.getY()].setImage(ghost.getImGhost());
+
             }
             tab[v.getX()][v.getY()].setFitWidth(Configuration.IMG_WIDTH);
             tab[v.getX()][v.getY()].setFitHeight(Configuration.IMG_HEIGHT);
