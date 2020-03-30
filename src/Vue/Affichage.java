@@ -207,10 +207,11 @@ public class Affichage extends Application {
         stackPane.getChildren().addAll(im, btnJouer, btnSuivant, btnQuitter); // hbox with button and text on top of image view
         
         stackPane.setAlignment(btnJouer, Pos.BOTTOM_CENTER);
+        stackPane.setAlignment(btnSuivant, Pos.BOTTOM_CENTER);
         stackPane.setAlignment(btnQuitter, Pos.BOTTOM_CENTER);
         stackPane.setMargin(btnJouer, new Insets(0, 0, 10, 0));
-        stackPane.setMargin(btnSuivant, new Insets(0, 0, 20, 0));
-        stackPane.setMargin(btnQuitter, new Insets(0, 0, 30, 0));
+        stackPane.setMargin(btnSuivant, new Insets(0, 0, 50, 0));
+        stackPane.setMargin(btnQuitter, new Insets(0, 0, 90, 0));
         
         root.getChildren().add(stackPane);
 
@@ -386,7 +387,6 @@ public class Affichage extends Application {
                 }
                 else if(maGrille.tabPosition.get(new Point(i,j)) instanceof PacMan){
                     tab[i][j].setImage(pm.getImPacman());
-
                 }
                 else if(maGrille.tabPosition.get(new Point(i,j)) instanceof Fantome){
                     Fantome ghost = (Fantome) maGrille.tabPosition.get(new Point(i,j));
@@ -415,28 +415,30 @@ public class Affichage extends Application {
 //            tab[v.getX()][v.getY()].setSmooth(true);
 //            tab[v.getX()][v.getY()].setCache(true);
 //        });
-        maGrille.tabPosition.forEach((v, k) -> {
-            //A enelver pour les taiwip fantomes //
-            /////////////////////////////////////////////
-            tab[v.getX()][v.getY()].setRotate(0);
-            tab[v.getX()][v.getY()].setScaleX(1);
-            ////////////////////////////////////////////
-            if(k instanceof PacMan) {
-                tab[v.getX()][v.getY()].setImage(pm.getImPacman());
-                tab[v.getX()][v.getY()].setRotate(pm.rotation);
-                tab[v.getX()][v.getY()].setScaleX(pm.scaling);
-            }
-            else if (k instanceof Fantome){
-                Fantome ghost = (Fantome) k;
-                tab[v.getX()][v.getY()].setImage(ghost.getImGhost());
+        synchronized(this){
+            maGrille.tabPosition.forEach((v, k) -> {
+                //A enelver pour les taiwip fantomes //
+                /////////////////////////////////////////////
+                tab[v.getX()][v.getY()].setRotate(0);
+                tab[v.getX()][v.getY()].setScaleX(1);
+                ////////////////////////////////////////////
+                if(k instanceof PacMan) {
+                    tab[v.getX()][v.getY()].setImage(pm.getImPacman());
+                    tab[v.getX()][v.getY()].setRotate(pm.rotation);
+                    tab[v.getX()][v.getY()].setScaleX(pm.scaling);
+                }
+                else if (k instanceof Fantome){
+                    Fantome ghost = (Fantome) k;
+                    tab[v.getX()][v.getY()].setImage(ghost.getImGhost());
 
-            }
-            tab[v.getX()][v.getY()].setFitWidth(Configuration.IMG_WIDTH);
-            tab[v.getX()][v.getY()].setFitHeight(Configuration.IMG_HEIGHT);
-            tab[v.getX()][v.getY()].setPreserveRatio(true);
-            tab[v.getX()][v.getY()].setSmooth(true);
-            tab[v.getX()][v.getY()].setCache(true);
-        });
+                }
+                tab[v.getX()][v.getY()].setFitWidth(Configuration.IMG_WIDTH);
+                tab[v.getX()][v.getY()].setFitHeight(Configuration.IMG_HEIGHT);
+                tab[v.getX()][v.getY()].setPreserveRatio(true);
+                tab[v.getX()][v.getY()].setSmooth(true);
+                tab[v.getX()][v.getY()].setCache(true);
+            }); 
+        }
     }
     
     // </editor-fold>

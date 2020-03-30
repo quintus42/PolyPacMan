@@ -15,10 +15,22 @@ import javafx.scene.image.Image;
  * @author Epulapp
  */
 public class PacMan extends Entite {
-    private final Image imPacman = new Image(Configuration.PATH_TO_IMG + "Pacman.png");
+    private Image imPacman = new Image(Configuration.PATH_TO_IMG + "Pacman.png");
+    
+    private boolean animation = false;
 
     public Image getImPacman() {
-        return imPacman;
+        synchronized(this){
+            
+            System.out.println("changement pacman");
+            animation = !animation;
+//            if (animation) {
+//                imPacman = new Image(Configuration.PATH_TO_IMG + "Pacman.png");
+//            }else{
+//                imPacman = new Image(Configuration.PATH_TO_IMG + "PacmanFerme.png");
+//            }
+            return imPacman;
+        }
     }
     
     public PacMan(){
