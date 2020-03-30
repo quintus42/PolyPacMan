@@ -42,6 +42,7 @@ public class Grille extends Observable implements Runnable{
     public boolean partieEnCours = false;
     private boolean superPacGomme = false;
     public boolean jeuEnPause = false;
+    public boolean Victoire;
     private Thread tInky;
     private Thread tPinky;
     private Thread tBlinky;
@@ -354,10 +355,12 @@ public class Grille extends Observable implements Runnable{
 
     @Override
     public void run() {
+        Victoire = false;
         partieEnCours = true;
         while(partieEnCours){
             if (verifierVictoire()) {
-                return;
+                setChanged(); 
+                notifyObservers();
             }else{
                 
                 try {
@@ -397,52 +400,65 @@ public class Grille extends Observable implements Runnable{
             int ligneLength = 0;
             while ((ligne = buffer.readLine()) != null){ //on lit le fichier
                 nbLigne++;
-                ligneLength = ligne.length();
+                if (ligne.length() > ligneLength) {
+                    ligneLength = ligne.length();
+                }
             }
             buffer.close();
             buffer = new BufferedReader(new FileReader(Configuration.CHEMIN_FICHIER_CUSTOMMAP)); //on ouvre le fichier une première fois pour le nb de ligne
             int y = 0;
             tabCaseStatique = new CaseStatique[ligneLength][nbLigne];
+            Configuration.setHauteurGrille(nbLigne);
+            Configuration.setLargeurGrille(ligneLength);
             while ((ligne = buffer.readLine()) != null){ //on lit le fichier
-                int index = 0;
-                for(char c: ligne.toCharArray()){
+                for(int i = 0; i < ligneLength; i++){
                     // A améliorer plus tard pour charger une map
-                    switch(c){
-                        case 'm' : //mur
-                            tabCaseStatique[index][y] = new Mur();
-                            break;
-                        case 'c' : //couloir
-                            tabCaseStatique[index][y] = new Couloir();
-                            break;
-                        case 'p' : //pacman on définit ici sa position !
-                            posPacMan = new Point(index, y);
-                            tabCaseStatique[index][y] = new Couloir();
-                            changerPositionEntite(new Point(index, y), "PacMan");
-                            break;
-                        case '1' : //Inky
-                            tabCaseStatique[index][y] = new Couloir();
-                            changerPositionEntite(new Point(index, y), "Inky");
-                            break;
-                        case '2' : //Pinky
-                            tabCaseStatique[index][y] = new Couloir();
-                            changerPositionEntite(new Point(index, y), "Pinky");
-                            break;
-                        case '3' : //Blinky
-                            tabCaseStatique[index][y] = new Couloir();
-                            changerPositionEntite(new Point(index, y), "Blinky");
-                            break;
-                        case '4' : //Clyde
-                            tabCaseStatique[index][y] = new Couloir();
-                            changerPositionEntite(new Point(index, y), "Clyde");
-                            break;
-                        case 'g' : //super pac-gomme
-                            tabCaseStatique[index][y] = new PacGomme();
-                            break;
-                        case 'G' : //super pac-gomme
-                            tabCaseStatique[index][y] = new SuperPacGomme();
-                            break;
+                    if (i < ligne.length()) {
+                        char c = ligne.charAt(i);
+                        switch(c){
+                          case ' ':
+                              tabCaseStatique[i][y] = new Couloir();
+                              break;
+                          case 'm' : //mur
+                              tabCaseStatique[i][y] = new Mur();
+                              break;
+                          case 'c' : //couloir
+                              tabCaseStatique[i][y] = new Couloir();
+                              break;
+                          case 'p' : //pacman on définit ici sa position !
+                              posPacMan = new Point(i, y);
+                              tabCaseStatique[i][y] = new Couloir();
+                              changerPositionEntite(new Point(i, y), "PacMan");
+                              break;
+                          case '1' : //Inky
+                              tabCaseStatique[i][y] = new Couloir();
+                              changerPositionEntite(new Point(i, y), "Inky");
+                              break;
+                          case '2' : //Pinky
+                              tabCaseStatique[i][y] = new Couloir();
+                              changerPositionEntite(new Point(i, y), "Pinky");
+                              break;
+                          case '3' : //Blinky
+                              tabCaseStatique[i][y] = new Couloir();
+                              changerPositionEntite(new Point(i, y), "Blinky");
+                              break;
+                          case '4' : //Clyde
+                              tabCaseStatique[i][y] = new Couloir();
+                              changerPositionEntite(new Point(i, y), "Clyde");
+                              break;
+                          case 'g' : //super pac-gomme
+                              tabCaseStatique[i][y] = new PacGomme();
+                              break;
+                          case 'G' : //super pac-gomme
+                              tabCaseStatique[i][y] = new SuperPacGomme();
+                              break;
+                          default:
+                              tabCaseStatique[i][y] = new Couloir();
+                              break;
+                        }  
+                    }else{
+                        tabCaseStatique[i][y] = new Couloir();
                     }
-                    index++;
                 }
                 y++;
             }
@@ -464,8 +480,10 @@ public class Grille extends Observable implements Runnable{
                     }
                 }
             }
-        }
-        partieEnCours = false;
+        } 
+        Victoire = true;
+        setChanged(); 
+        notifyObservers();
         return true;
     }
     

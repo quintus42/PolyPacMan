@@ -1,20 +1,20 @@
 mmmmmmmcmcmcmmmmmmmm
-mccccmcccccccccccccm
-mccmgmgmcccccccccccm
-mccmgmgmmmmmmmmccccm
-mccmgmgggGggggmccccm
-mccmgmmmmmmmmgmccccm
-mccmgggggggGggmccccm
-mccmmmmmmmmmmmmccccm
-mccccccccccccccccccm
-mccccccccccccccccccm
-mccccccccccccccccccm
-mccccccc1234cccccccm
-mccccccccccccccccccm
-mccccccccccccccccccm
-mccccccccccccccccccm
-mccccccccccccccccccm
-mccccccccpcccccccccm
-mccccccccccccccccccm
-mccccccccccccccccccm
+mccccmcccccccccccccmmmmmmmmm
+mccmgmgmcccccccccccccccccccm
+mccmgmgmmmmmmmmccccmmmmmmmcm
+mccmgmgggGggggmccccm     mcm
+mccmgmmmmmmmmgmccccm     mcm
+mccmgggggggGggmccccm     mcm
+mccmmmmmmmmmmmmccccm     mcm
+mccccccccccccccccccmmmmmmmcm
+cccccccccccccccccccccccccmcc
+mccccccccccccccccccmmmmmcmcm
+mccccccc1234cccccccm   mcccm
+mccccccccccccccccccmmmmmcmcm
+cccccccccccccccccccccccccmcc
+mccccccccccccccccccmmmmmmmcm
+mccccccccccccccccccm     mcm
+mccccccccpcccccccccm mmmmmcm
+mccccccccccccccccccccccccccm
+mccccccccccccccccccmmmmmmmmm
 mmmmmmmcmcmcmmmmmmmm

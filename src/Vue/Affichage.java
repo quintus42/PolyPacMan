@@ -32,6 +32,7 @@ import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Group;
+import javafx.scene.Parent;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.input.KeyCode;
@@ -77,13 +78,44 @@ public class Affichage extends Application {
 
     private ImageView[][]tab = new ImageView[size_x][size_y];
     
+    private Scene scene;
+    
+    private Stage pStage;
+    
     // </editor-fold>
+    
+    private void majTabAffichage(int sizex, int sizey){
+        
+        Group root = new Group();
+        grid = new GridPane();
+        size_x = sizex;
+        size_y = sizey;
+        tab = new ImageView[size_x][size_y];
+        for (int i = 0; i < size_x; i++) {
+            for (int j = 0; j < size_y; j++) {
+                ImageView img = new ImageView();
+                tab[i][j] = img;
+                grid.add(img, i, j);
+            }
+        }
+        root.getChildren().add(grid); 
+        root.setStyle("-fx-background-color: #808080;");
+        Image imIcon = new Image(Configuration.PATH_TO_IMG + "icon.png",Configuration.IMG_WIDTH,Configuration.IMG_HEIGHT,false,false);
+        Scene scene = new Scene(root, Configuration.WINDOW_WIDTH, Configuration.WINDOW_HEIGTH, Paint.valueOf("Black"));
+        pStage.getIcons().add(imIcon);
+        pStage.setTitle("Pacman");
+        pStage.setScene(scene);
+        pStage.show();
+        setKeyEvents(root);
+    }
 
     @Override
     public void start(Stage primaryStage) {
         Group root = new Group();
 
-        primaryStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
+        pStage = primaryStage;
+        
+        pStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
             @Override
             public void handle(WindowEvent t) {
                 Platform.exit();
@@ -96,7 +128,7 @@ public class Affichage extends Application {
         btnJouer.setOnAction(new EventHandler<ActionEvent>() {
             @Override public void handle(ActionEvent e) {
                 //Stage st = new Stage(StageStyle.DECORATED);
-                lancerPartie(primaryStage);
+                lancerPartie();
             }
         });
         Button btnQuitter = new Button("Quiter");
@@ -121,25 +153,79 @@ public class Affichage extends Application {
         
         root.getChildren().add(stackPane);
 
-        Scene scene = new Scene(root, 405, 405, Paint.valueOf("Black"));
+        scene = new Scene(root, 405, 405, Paint.valueOf("Black"));
         Image imIcon = new Image(Configuration.PATH_TO_IMG + "icon.png",Configuration.IMG_WIDTH,Configuration.IMG_HEIGHT,false,false);
-        primaryStage.getIcons().add(imIcon);
-        primaryStage.setTitle("Pacman");
-        primaryStage.setScene(scene);
-        primaryStage.show();
+        pStage.getIcons().add(imIcon);
+        pStage.setTitle("Pacman");
+        pStage.setScene(scene);
+        pStage.show();
         
     }
     
-    
-    
-    private void lancerPartie(Stage primaryStage){
-        tab = new ImageView[size_x][size_y];
-        maGrille = new Grille();
+    private void lancerEcranVictoire(){
+        Group root = new Group();
         
-        grid = new GridPane();
+        Stage victoire = new Stage(StageStyle.DECORATED);
+        
+        victoire.setOnCloseRequest(new EventHandler<WindowEvent>() {
+            @Override
+            public void handle(WindowEvent t) {
+                Platform.exit();
+                System.exit(0);
+            }
+        });
+
+        Button btnJouer = new Button("Rejouer");
+        btnJouer.setMinSize(120, 30);
+        btnJouer.setOnAction(new EventHandler<ActionEvent>() {
+            @Override public void handle(ActionEvent e) {
+                //Stage st = new Stage(StageStyle.DECORATED);
+                lancerPartie();
+            }
+        });
+        Button btnQuitter = new Button("Quiter");
+        btnQuitter.setMinSize(120, 30);
+        btnQuitter.setOnAction(new EventHandler<ActionEvent>() {
+            @Override public void handle(ActionEvent e) {
+                Platform.exit();
+                System.exit(0);
+            }
+        });
+        Button btnSuivant = new Button("Niveau Suivant");
+        btnSuivant.setMinSize(120, 30);
+        btnSuivant.setOnAction(new EventHandler<ActionEvent>() {
+            @Override public void handle(ActionEvent e) {
+                Platform.exit();
+                System.exit(0);
+            }
+        });
+        
+        Image image = new Image(Configuration.PATH_TO_IMG + "Victoire.jpg");
+        ImageView im = new ImageView(image);
+
+        StackPane stackPane = new StackPane();
+        stackPane.getChildren().addAll(im, btnJouer, btnSuivant, btnQuitter); // hbox with button and text on top of image view
+        
+        stackPane.setAlignment(btnJouer, Pos.BOTTOM_CENTER);
+        stackPane.setAlignment(btnQuitter, Pos.BOTTOM_CENTER);
+        stackPane.setMargin(btnJouer, new Insets(0, 0, 10, 0));
+        stackPane.setMargin(btnSuivant, new Insets(0, 0, 20, 0));
+        stackPane.setMargin(btnQuitter, new Insets(0, 0, 30, 0));
+        
+        root.getChildren().add(stackPane);
+
+        Scene s = new Scene(root, 405, 405, Paint.valueOf("Black"));
+        victoire.setTitle("Pacman");
+        victoire.setScene(s);
+        victoire.show();
+    }
+    
+    private void lancerPartie(){
 
         //Ajout des items à la grille
         StackPane root = new StackPane();//Ajout de la grille
+        
+        grid = new GridPane();
 
         // initialisation de la grille (sans image)
         for (int i = 0; i < size_x; i++) {
@@ -155,21 +241,57 @@ public class Affichage extends Application {
         root.getChildren().add(grid); 
         root.setStyle("-fx-background-color: #808080;");
         Image imIcon = new Image(Configuration.PATH_TO_IMG + "icon.png",Configuration.IMG_WIDTH,Configuration.IMG_HEIGHT,false,false);
-        Scene scene = new Scene(root, Configuration.WINDOW_WIDTH, Configuration.WINDOW_HEIGTH, Paint.valueOf("Black"));
-        primaryStage.getIcons().add(imIcon);
-        primaryStage.setTitle("Pacman");
-        primaryStage.setScene(scene);
-        primaryStage.show();
+        scene = new Scene(root, Configuration.WINDOW_WIDTH, Configuration.WINDOW_HEIGTH, Paint.valueOf("Black"));
+        pStage.getIcons().add(imIcon);
+        pStage.setTitle("Pacman");
+        pStage.setScene(scene);
+        pStage.show();
         
         try {
-            root.setOnKeyPressed(new EventHandler<javafx.scene.input.KeyEvent>() { // on écoute le clavier
+            
+            setKeyEvents(root);
+
+            Observer o =  new Observer() { // l'observer observe l'obervable (update est exécuté dès notifyObservers() est appelé côté modèle )
+                @Override
+                public void update(Observable o, Object arg) {
+                    if (maGrille.Victoire) {
+                        maGrille.Victoire = false;
+                        Platform.runLater(new Runnable() {
+                            @Override public void run() {
+                                lancerEcranVictoire();
+                            }
+                        });
+                        maGrille.stop();
+                    }else{
+                        if (maGrille.tabCaseStatique.length != size_x || maGrille.tabCaseStatique[0].length != size_y ) {
+                            majTabAffichage(maGrille.tabCaseStatique.length, maGrille.tabCaseStatique[0].length);
+                        }
+                        setGridImg();
+                        setGridEntityImg();
+                    }
+                }
+            };
+            
+            maGrille.addObserver(o);
+            maGrille.lireGrilleFichier(Configuration.CHEMIN_FICHIER_CUSTOMMAP);
+            maGrille.start();
+            
+            grid.requestFocus();
+            
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+    }
+    
+    private void setKeyEvents(Parent root){
+        root.setOnKeyPressed(new EventHandler<javafx.scene.input.KeyEvent>() { // on écoute le clavier
 
                 @Override
                 public void handle(javafx.scene.input.KeyEvent event) {
                     switch(event.getCode()){
                         case ESCAPE: 
                             maGrille.stop();
-                            start(primaryStage);
+                            start(pStage);
                             break;
                         case Z :
                         case UP :
@@ -208,34 +330,20 @@ public class Affichage extends Application {
                             pm.scaling = 1;
                             if (maGrille.partieEnCours) {
                                 maGrille.stop();
-                                maGrille.lireGrilleFichier(Configuration.CHEMIN_FICHIER_CUSTOMMAP);
-                                maGrille.start();
+                                //maGrille.lireGrilleFichier(Configuration.CHEMIN_FICHIER_CUSTOMMAP);
+                                //Platform.runLater(maGrille);
+                                //maGrille.start();
+                                lancerPartie();
                             }else{
-                                maGrille.lireGrilleFichier(Configuration.CHEMIN_FICHIER_CUSTOMMAP);
-                                maGrille.start();
+                                //maGrille.lireGrilleFichier(Configuration.CHEMIN_FICHIER_CUSTOMMAP);
+                                //Platform.runLater(maGrille);
+                                //maGrille.start();
+                                lancerPartie();
                             }
                             break;
                     }
                 }
             });
-
-            Observer o =  new Observer() { // l'observer observe l'obervable (update est exécuté dès notifyObservers() est appelé côté modèle )
-                @Override
-                public void update(Observable o, Object arg) {
-                    setGridImg();
-                    setGridEntityImg();
-                }
-            };
-            
-            maGrille.addObserver(o);
-            maGrille.lireGrilleFichier(Configuration.CHEMIN_FICHIER_CUSTOMMAP);
-            maGrille.start();
-            
-            grid.requestFocus();
-            
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-        }
     }
 
     // <editor-fold defaultstate="collapsed" desc="View Update">
@@ -244,6 +352,9 @@ public class Affichage extends Application {
     private void setGridImg(){
         for (int i = 0; i < size_x ; i++) {
             for (int j = 0; j < size_y; j++) {
+                if (maGrille.tabCaseStatique[i][j] == null) {
+                    continue;
+                }
                 if(maGrille.tabCaseStatique[i][j] instanceof Mur) {
                     tab[i][j].setImage(wall.getImFullWall());
                 }
