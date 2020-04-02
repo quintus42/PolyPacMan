@@ -17,12 +17,21 @@ import javafx.scene.image.Image;
 
 public class Fantome extends Entite implements Runnable{
 
-    private Image imGhost;
+    protected Image imGhost;
     
     public static boolean spgEnCours;
 
     public Image getImGhost() {
-        return imGhost;
+        if (spgEnCours) {
+            //return null;
+            return new Image(Configuration.PATH_TO_IMG + "icon.png");
+        }else{
+            return imGhost;
+        }
+    }
+    
+    public String getName(){
+        return "";
     }
     
     public Fantome(){

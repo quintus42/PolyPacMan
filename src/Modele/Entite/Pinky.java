@@ -4,11 +4,13 @@ import Modele.Configuration;
 import javafx.scene.image.Image;
 
 public class Pinky extends Fantome {
-
-    private final Image imGhost = new Image(Configuration.PATH_TO_IMG + "PinkGhost.png");
+    
+    public Pinky() {
+        this.imGhost = new Image(Configuration.PATH_TO_IMG + "PinkGhost.png");
+    }
 
     @Override
-    public Image getImGhost() {
-        return imGhost;
+    public String getName() {
+        return "Pinky"; //To change body of generated methods, choose Tools | Templates.
     }
 }
