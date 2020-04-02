@@ -9,6 +9,10 @@ package Modele.Entite;
 
 import Modele.Configuration;
 import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  *
@@ -16,13 +20,14 @@ import javafx.scene.image.Image;
  */
 public class PacMan extends Entite {
     private Image imPacman = new Image(Configuration.PATH_TO_IMG + "Pacman.png");
-    
+
     private boolean animation = false;
+    public List<Image> images = new ArrayList<>();
 
     public Image getImPacman() {
         synchronized(this){
             
-            System.out.println("changement pacman");
+//            System.out.println("changement pacman");
             animation = !animation;
 //            if (animation) {
 //                imPacman = new Image(Configuration.PATH_TO_IMG + "Pacman.png");
@@ -35,5 +40,12 @@ public class PacMan extends Entite {
     
     public PacMan(){
         super();
+        for(int i =1; i <= 4; i++){
+            images.add(new Image(Configuration.PATH_TO_IMG + "/Sprite/TestAnim/pm"+ i +".png"));
+        }
+    }
+
+    public void setImPacman(Image imPacman) {
+        this.imPacman = imPacman;
     }
 }

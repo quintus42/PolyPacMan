@@ -13,6 +13,8 @@ import Modele.Configuration;
 import Modele.Entite.*;
 import Modele.Grille.Grille;
 import Modele.Grille.Point;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -20,12 +22,15 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Paint;
 import javafx.stage.Stage;
 
 //import java.awt.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 import javafx.application.Platform;
@@ -48,8 +53,9 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.stage.StageStyle;
-import javafx.stage.WindowEvent;
-import jdk.nashorn.internal.runtime.regexp.joni.Config;
+import javafx.stage.*;
+import javafx.util.Duration;
+import javafx.scene.input.InputEvent;
 
 /**
  *
@@ -81,9 +87,10 @@ public class Affichage extends Application {
     private Scene scene;
     
     private Stage pStage;
-    
+
+    private int animationPmIndex = 0;
     // </editor-fold>
-    
+
     private void majTabAffichage(int sizex, int sizey){
         
         Group root = new Group();
@@ -161,7 +168,19 @@ public class Affichage extends Application {
         pStage.show();
         
     }
-    
+    private void initPacManAnim(){
+        Timeline pmAnimationTimeLine = new Timeline(new KeyFrame(Duration.seconds(0.15), new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                if(animationPmIndex >= pm.images.size())
+                    animationPmIndex = 0;
+                pm.setImPacman(pm.images.get(animationPmIndex));
+                animationPmIndex++;
+            }
+        }));
+        pmAnimationTimeLine.setCycleCount(Timeline.INDEFINITE);
+        pmAnimationTimeLine.play();
+    }
     private void lancerEcranVictoire(){
         Group root = new Group();
         
@@ -240,14 +259,14 @@ public class Affichage extends Application {
         setGridImg();
 
         root.getChildren().add(grid); 
-        root.setStyle("-fx-background-color: #808080;");
+        root.setStyle("-fx-background-color: #000000;");
         Image imIcon = new Image(Configuration.PATH_TO_IMG + "icon.png",Configuration.IMG_WIDTH,Configuration.IMG_HEIGHT,false,false);
         scene = new Scene(root, Configuration.WINDOW_WIDTH, Configuration.WINDOW_HEIGTH, Paint.valueOf("Black"));
         pStage.getIcons().add(imIcon);
         pStage.setTitle("Pacman");
         pStage.setScene(scene);
         pStage.show();
-        
+        initPacManAnim();
         try {
             
             setKeyEvents(root);
@@ -387,6 +406,7 @@ public class Affichage extends Application {
                 }
                 else if(maGrille.tabPosition.get(new Point(i,j)) instanceof PacMan){
                     tab[i][j].setImage(pm.getImPacman());
+
                 }
                 else if(maGrille.tabPosition.get(new Point(i,j)) instanceof Fantome){
                     Fantome ghost = (Fantome) maGrille.tabPosition.get(new Point(i,j));
