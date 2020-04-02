@@ -18,6 +18,8 @@ import javafx.scene.image.Image;
 public class Fantome extends Entite implements Runnable{
 
     private Image imGhost;
+    
+    public static boolean spgEnCours;
 
     public Image getImGhost() {
         return imGhost;

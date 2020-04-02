@@ -28,6 +28,7 @@ import java.util.Observable;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.geometry.Point2D;
+import javafx.scene.image.Image;
 import javafx.util.Pair;
 
 
@@ -328,6 +329,23 @@ public class Grille extends Observable implements Runnable{
                 //tabPosition.remove(oldPos);
                 //tabPosition.put(oldPos.add(-e.vitesse, 0), e);
                 break;
+        }
+        if (e instanceof PacMan) {
+            tabCaseStatique[newPos.getX()][newPos.getY()].effectuerTraitement();
+            if (tabCaseStatique[newPos.getX()][newPos.getY()] instanceof SuperPacGomme) {
+                this.superPacGomme = true;
+                Runnable r = new Runnable() {
+                    @Override public void run() {
+                        try {
+                            Thread.sleep(5000);
+                        } catch (InterruptedException ex) {
+                            Logger.getLogger(Grille.class.getName()).log(Level.SEVERE, null, ex);
+                        }
+                        superPacGomme = false;
+                    }
+                };
+                (new Thread(r)).start();
+            }
         }
     }
     

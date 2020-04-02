@@ -11,4 +11,8 @@ package Modele.Case;
  */
 public class Sablier extends Couloir {
     
+    public Sablier(String path) {
+        super(path);
+    }
+    
 }
