@@ -25,7 +25,6 @@ import java.util.Dictionary;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Iterator;
-import java.util.Map.Entry;
 import java.util.Observable;
 import java.util.logging.Level;
 import java.util.logging.Logger;

@@ -21,6 +21,8 @@ public class Fantome extends Entite implements Runnable{
     
     public static boolean spgEnCours;
 
+    private final Image imFearingGhost = new Image(Configuration.PATH_TO_IMG + "FearingGhost.png");
+
     public Image getImGhost() {
         if (spgEnCours) {
             //return null;
@@ -70,5 +72,9 @@ public class Fantome extends Entite implements Runnable{
             }
             changerDirection();
         }
+    }
+
+    public Image getImFearingGhost() {
+        return imFearingGhost;
     }
 }
