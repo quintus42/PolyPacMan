@@ -349,7 +349,7 @@ public class Grille extends Observable implements Runnable{
                         } catch (InterruptedException ex) {
                             Logger.getLogger(Grille.class.getName()).log(Level.SEVERE, null, ex);
                         }
-                        //superPacGomme = false;
+                        superPacGomme = false;
                     }
                 };
                 (new Thread(r)).start();

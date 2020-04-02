@@ -26,7 +26,9 @@ public class Fantome extends Entite implements Runnable{
     public Image getImGhost() {
         if (spgEnCours) {
             //return null;
-            return new Image(Configuration.PATH_TO_IMG + "icon.png");
+            //return new Image(Configuration.PATH_TO_IMG + "icon.png");
+            //return new Image(Configuration.PATH_TO_IMG + "FearingGhost.png");
+            return new Image(Configuration.PATH_TO_IMG + "BlueGhost.png");
         }else{
             return imGhost;
         }

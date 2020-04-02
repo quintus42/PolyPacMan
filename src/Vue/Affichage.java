@@ -437,7 +437,8 @@ public class Affichage extends Application {
 //            tab[v.getX()][v.getY()].setCache(true);
 //        });
         synchronized(this){
-            maGrille.tabPosition.forEach((v, k) -> {
+            try {
+                maGrille.tabPosition.forEach((v, k) -> {
                 //A enelver pour les taiwip fantomes //
                 /////////////////////////////////////////////
                 tab[v.getX()][v.getY()].setRotate(0);
@@ -459,6 +460,8 @@ public class Affichage extends Application {
                 tab[v.getX()][v.getY()].setSmooth(true);
                 tab[v.getX()][v.getY()].setCache(true);
             }); 
+            } catch (Exception e) {
+            }
         }
     }
     
