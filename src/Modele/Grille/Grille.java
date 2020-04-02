@@ -17,18 +17,13 @@ import Modele.Entite.Entite;
 import Modele.Entite.Inky;
 import Modele.Entite.PacMan;
 import Modele.Entite.Pinky;
-import com.sun.javaws.ui.ApplicationIconGenerator;
 import java.io.BufferedReader;
 import java.io.FileReader;
-import java.util.Dictionary;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Map.Entry;
 import java.util.Observable;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javafx.geometry.Point2D;
-import javafx.util.Pair;
 
 
 /**
