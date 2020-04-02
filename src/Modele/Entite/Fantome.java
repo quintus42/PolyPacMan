@@ -19,6 +19,8 @@ public class Fantome extends Entite implements Runnable{
 
     private Image imGhost;
 
+    private final Image imFearingGhost = new Image(Configuration.PATH_TO_IMG + "FearingGhost.png");
+
     public Image getImGhost() {
         return imGhost;
     }
@@ -59,5 +61,9 @@ public class Fantome extends Entite implements Runnable{
             }
             changerDirection();
         }
+    }
+
+    public Image getImFearingGhost() {
+        return imFearingGhost;
     }
 }

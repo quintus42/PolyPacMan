@@ -19,16 +19,12 @@ import Modele.Entite.PacMan;
 import Modele.Entite.Pinky;
 import java.io.BufferedReader;
 import java.io.FileReader;
-import java.util.Dictionary;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Iterator;
-import java.util.Map.Entry;
 import java.util.Observable;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javafx.geometry.Point2D;
-import javafx.util.Pair;
 
 
 /**
