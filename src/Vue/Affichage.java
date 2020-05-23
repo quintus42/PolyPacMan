@@ -377,44 +377,45 @@ public class Affichage extends Application {
             for (int j = 0; j < size_y; j++) {
                 if (maGrille.tabCaseStatique[i][j] == null) {
                     continue;
+                }else{
+                    tab[i][j].setImage(maGrille.tabCaseStatique[i][j].getImg());
                 }
-                if(maGrille.tabCaseStatique[i][j] instanceof Mur) {
-                    tab[i][j].setImage(wall.getImFullWall());
-                }
-                else{
-                    //Rien à ajouter parce que les couloir c'est noir
-                    tab[i][j].setImage(null);
-                }
-                if (maGrille.tabCaseStatique[i][j] instanceof PacGomme) {
-                    Point posPacman = maGrille.getPositionPacman();
-                    if (posPacman.equals(new Point(i, j))) {
-                        ((Couloir)(maGrille.tabCaseStatique[i][j])).mangee = true;
-                    }
-                    if (((Couloir)(maGrille.tabCaseStatique[i][j])).mangee) {
-                        tab[i][j].setImage(null);
-                    }else{
-                        tab[i][j].setImage(pg.getImPacGomme());
-                    }
-                }
-                else if (maGrille.tabCaseStatique[i][j] instanceof SuperPacGomme){
-                    Point posPacman = maGrille.getPositionPacman();
-                    if (posPacman.equals(new Point(i, j))) {
-                        ((Couloir)(maGrille.tabCaseStatique[i][j])).mangee = true;
-                    }
-                    if (((Couloir)(maGrille.tabCaseStatique[i][j])).mangee) {
-                        tab[i][j].setImage(null);
-                    }else{
-                        tab[i][j].setImage(spg.getImSuperPacGomme());
-                    }
-                }
-                else if(maGrille.tabPosition.get(new Point(i,j)) instanceof PacMan){
-                    tab[i][j].setImage(pm.getImPacman());
-
-                }
-                else if(maGrille.tabPosition.get(new Point(i,j)) instanceof Fantome){
-                    Fantome ghost = (Fantome) maGrille.tabPosition.get(new Point(i,j));
-                    tab[i][j].setImage(ghost.getImGhost());
-                }
+//                if(maGrille.tabCaseStatique[i][j] instanceof Mur) {
+//                    tab[i][j].setImage(wall.getImFullWall());
+//                }
+//                else{
+//                    //Rien à ajouter parce que les couloir c'est noir
+//                    tab[i][j].setImage(null);
+//                }
+//                if (maGrille.tabCaseStatique[i][j] instanceof PacGomme) {
+//                    Point posPacman = maGrille.getPositionPacman();
+//                    if (posPacman.equals(new Point(i, j))) {
+//                        ((Couloir)(maGrille.tabCaseStatique[i][j])).mangee = true;
+//                    }
+//                    if (((Couloir)(maGrille.tabCaseStatique[i][j])).mangee) {
+//                        tab[i][j].setImage(null);
+//                    }else{
+//                        tab[i][j].setImage(pg.getImg());
+//                    }
+//                }
+//                else if (maGrille.tabCaseStatique[i][j] instanceof SuperPacGomme){
+//                    Point posPacman = maGrille.getPositionPacman();
+//                    if (posPacman.equals(new Point(i, j))) {
+//                        ((Couloir)(maGrille.tabCaseStatique[i][j])).mangee = true;
+//                    }
+//                    if (((Couloir)(maGrille.tabCaseStatique[i][j])).mangee) {
+//                        tab[i][j].setImage(null);
+//                    }else{
+//                        tab[i][j].setImage(spg.getImSuperPacGomme());
+//                    }
+//                }
+//                else if(maGrille.tabPosition.get(new Point(i,j)) instanceof PacMan){
+//                    tab[i][j].setImage(pm.getImPacman());
+//                }
+//                else if(maGrille.tabPosition.get(new Point(i,j)) instanceof Fantome){
+//                    Fantome ghost = (Fantome) maGrille.tabPosition.get(new Point(i,j));
+//                    tab[i][j].setImage(ghost.getImGhost());
+//                }
                 tab[i][j].setFitWidth(Configuration.IMG_WIDTH);
                 tab[i][j].setFitHeight(Configuration.IMG_HEIGHT);
                 tab[i][j].setPreserveRatio(true);
@@ -438,9 +439,9 @@ public class Affichage extends Application {
 //            tab[v.getX()][v.getY()].setSmooth(true);
 //            tab[v.getX()][v.getY()].setCache(true);
 //        });
-
-        try{
-            maGrille.tabPosition.forEach((v, k) -> {
+        synchronized(this){
+            try {
+                maGrille.tabPosition.forEach((v, k) -> {
                 //A enelver pour les taiwip fantomes //
                 /////////////////////////////////////////////
                 tab[v.getX()][v.getY()].setRotate(0);
@@ -461,8 +462,9 @@ public class Affichage extends Application {
                 tab[v.getX()][v.getY()].setPreserveRatio(true);
                 tab[v.getX()][v.getY()].setSmooth(true);
                 tab[v.getX()][v.getY()].setCache(true);
-            });
-        }catch (Exception ignored){
+            }); 
+            } catch (Exception e) {
+            }
         }
 
     }

@@ -8,6 +8,8 @@ package Modele.Entite;
 
 
 import Modele.Configuration;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
@@ -40,6 +42,24 @@ public class PacMan extends Entite {
     
     public PacMan(){
         super();
+        Runnable r = new Runnable() {
+            @Override public void run() {
+                while (true) {                    
+                    try {
+                        Thread.sleep(100);
+                    } catch (InterruptedException ex) {
+                        Logger.getLogger(PacMan.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                    animation = !animation;
+                    if (animation) {
+                        imPacman = new Image(Configuration.PATH_TO_IMG + "Pacman.png");
+                    }else{
+                        imPacman = new Image(Configuration.PATH_TO_IMG + "PacmanFerme.png");
+                    }
+                }
+            }
+        };
+        (new Thread(r)).start();
         for(int i =1; i <= 4; i++){
             images.add(new Image(Configuration.PATH_TO_IMG + "/Sprite/TestAnim/pm"+ i +".png"));
         }

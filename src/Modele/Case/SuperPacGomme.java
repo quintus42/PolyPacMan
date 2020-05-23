@@ -14,9 +14,13 @@ import javafx.scene.image.Image;
  */
 public class SuperPacGomme extends Couloir {
 
-    private final static Image imSuperPacGomme = new Image(Configuration.PATH_TO_IMG + "SuperPacGomme.png");
+//    private final static Image imSuperPacGomme = new Image(Configuration.PATH_TO_IMG + "SuperPacGomme.png");
 
-    public Image getImSuperPacGomme() {
-        return imSuperPacGomme;
+    public SuperPacGomme() {
+        super(Configuration.PATH_TO_IMG + "SuperPacGomme.png");
     }
+
+//    public Image getImSuperPacGomme() {
+//        return imSuperPacGomme;
+//    }
 }
