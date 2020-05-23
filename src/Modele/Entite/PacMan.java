@@ -46,6 +46,6 @@ public class PacMan extends Entite {
     }
 
     public void setImPacman(Image imPacman) {
-        this.imPacman = imPacman;
+            this.imPacman = imPacman;
     }
 }

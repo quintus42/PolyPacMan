@@ -89,6 +89,7 @@ public class Affichage extends Application {
     private Stage pStage;
 
     private int animationPmIndex = 0;
+    private Timeline pmAnimationTimeLine;
     // </editor-fold>
 
     private void majTabAffichage(int sizex, int sizey){
@@ -169,7 +170,8 @@ public class Affichage extends Application {
         
     }
     private void initPacManAnim(){
-        Timeline pmAnimationTimeLine = new Timeline(new KeyFrame(Duration.seconds(0.15), new EventHandler<ActionEvent>() {
+         pmAnimationTimeLine = null;
+         pmAnimationTimeLine = new Timeline(new KeyFrame(Duration.seconds(0.2), new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
                 if(animationPmIndex >= pm.images.size())
@@ -350,6 +352,7 @@ public class Affichage extends Application {
                             pm.scaling = 1;
                             if (maGrille.partieEnCours) {
                                 maGrille.stop();
+                                pmAnimationTimeLine.stop();
                                 //maGrille.lireGrilleFichier(Configuration.CHEMIN_FICHIER_CUSTOMMAP);
                                 //Platform.runLater(maGrille);
                                 //maGrille.start();
@@ -435,7 +438,8 @@ public class Affichage extends Application {
 //            tab[v.getX()][v.getY()].setSmooth(true);
 //            tab[v.getX()][v.getY()].setCache(true);
 //        });
-        synchronized(this){
+
+        try{
             maGrille.tabPosition.forEach((v, k) -> {
                 //A enelver pour les taiwip fantomes //
                 /////////////////////////////////////////////
@@ -457,8 +461,10 @@ public class Affichage extends Application {
                 tab[v.getX()][v.getY()].setPreserveRatio(true);
                 tab[v.getX()][v.getY()].setSmooth(true);
                 tab[v.getX()][v.getY()].setCache(true);
-            }); 
+            });
+        }catch (Exception ignored){
         }
+
     }
     
     // </editor-fold>
