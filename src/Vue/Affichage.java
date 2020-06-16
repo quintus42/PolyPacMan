@@ -5,6 +5,7 @@
  */
 package Vue;
 
+import Modele.Case.CaseGrilleJava;
 import Modele.Case.Couloir;
 import Modele.Case.Mur;
 import Modele.Case.PacGomme;
@@ -13,6 +14,9 @@ import Modele.Configuration;
 import Modele.Entite.*;
 import Modele.Grille.Grille;
 import Modele.Grille.Point;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.application.Application;
@@ -33,13 +37,22 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
+import java.util.Optional;
+import java.util.Random;
 import javafx.application.Platform;
+import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Group;
+import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.control.ButtonBar.ButtonData;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.Dialog;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Background;
@@ -56,6 +69,11 @@ import javafx.stage.StageStyle;
 import javafx.stage.*;
 import javafx.util.Duration;
 import javafx.scene.input.InputEvent;
+import javafx.scene.input.MouseButton;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.shape.Box;
+import javafx.scene.shape.Rectangle;
+import javafx.util.Pair;
 
 /**
  *
@@ -138,6 +156,14 @@ public class Affichage extends Application {
                 lancerPartie();
             }
         });
+        Button btnPerso = new Button("Personnaliser");
+        btnPerso.setMinSize(120, 30);
+        btnPerso.setOnAction(new EventHandler<ActionEvent>() {
+            @Override public void handle(ActionEvent e) {
+                //Stage st = new Stage(StageStyle.DECORATED);
+                lancerPersonnalisation();
+            }
+        });
         Button btnQuitter = new Button("Quiter");
         btnQuitter.setMinSize(120, 30);
         btnQuitter.setOnAction(new EventHandler<ActionEvent>() {
@@ -151,12 +177,14 @@ public class Affichage extends Application {
         ImageView im = new ImageView(image);
 
         StackPane stackPane = new StackPane();
-        stackPane.getChildren().addAll(im, btnJouer, btnQuitter); // hbox with button and text on top of image view
+        stackPane.getChildren().addAll(im, btnJouer, btnPerso, btnQuitter); // hbox with button and text on top of image view
         
         stackPane.setAlignment(btnJouer, Pos.BOTTOM_CENTER);
+        stackPane.setAlignment(btnPerso, Pos.BOTTOM_CENTER);
         stackPane.setAlignment(btnQuitter, Pos.BOTTOM_CENTER);
-        stackPane.setMargin(btnJouer, new Insets(0, 0, 100, 0));
-        stackPane.setMargin(btnQuitter, new Insets(0, 0, 60, 0));
+        stackPane.setMargin(btnJouer, new Insets(0, 0, 120, 0));
+        stackPane.setMargin(btnPerso, new Insets(0, 0, 80, 0));
+        stackPane.setMargin(btnQuitter, new Insets(0, 0, 40, 0));
         
         root.getChildren().add(stackPane);
 
@@ -181,7 +209,8 @@ public class Affichage extends Application {
         pmAnimationTimeLine.setCycleCount(Timeline.INDEFINITE);
         pmAnimationTimeLine.play();
     }
-    private void lancerEcranVictoire(){
+    
+    private void lancerEcran(Boolean defaite){
         Group root = new Group();
         
         Stage victoire = new Stage(StageStyle.DECORATED);
@@ -210,27 +239,41 @@ public class Affichage extends Application {
                 System.exit(0);
             }
         });
-        Button btnSuivant = new Button("Niveau Suivant");
-        btnSuivant.setMinSize(120, 30);
-        btnSuivant.setOnAction(new EventHandler<ActionEvent>() {
-            @Override public void handle(ActionEvent e) {
-                Platform.exit();
-                System.exit(0);
-            }
-        });
         
-        Image image = new Image(Configuration.PATH_TO_IMG + "Victoire.jpg");
-        ImageView im = new ImageView(image);
-
         StackPane stackPane = new StackPane();
-        stackPane.getChildren().addAll(im, btnJouer, btnSuivant, btnQuitter); // hbox with button and text on top of image view
         
-        stackPane.setAlignment(btnJouer, Pos.BOTTOM_CENTER);
-        stackPane.setAlignment(btnSuivant, Pos.BOTTOM_CENTER);
-        stackPane.setAlignment(btnQuitter, Pos.BOTTOM_CENTER);
-        stackPane.setMargin(btnJouer, new Insets(0, 0, 10, 0));
-        stackPane.setMargin(btnSuivant, new Insets(0, 0, 50, 0));
-        stackPane.setMargin(btnQuitter, new Insets(0, 0, 90, 0));
+        if (!defaite) {
+            Button btnSuivant = new Button("Niveau Suivant");
+            btnSuivant.setMinSize(120, 30);
+            btnSuivant.setOnAction(new EventHandler<ActionEvent>() {
+                @Override public void handle(ActionEvent e) {
+                    Platform.exit();
+                    System.exit(0);
+                }
+            });
+            
+            Image image = new Image(Configuration.PATH_TO_IMG + "Victoire.jpg");
+            ImageView im = new ImageView(image);
+
+            stackPane.getChildren().addAll(im, btnJouer, btnSuivant, btnQuitter); // hbox with button and text on top of image view
+
+            stackPane.setAlignment(btnJouer, Pos.BOTTOM_CENTER);
+            stackPane.setAlignment(btnSuivant, Pos.BOTTOM_CENTER);
+            stackPane.setAlignment(btnQuitter, Pos.BOTTOM_CENTER);
+            stackPane.setMargin(btnJouer, new Insets(0, 0, 10, 0));
+            stackPane.setMargin(btnSuivant, new Insets(0, 0, 50, 0));
+            stackPane.setMargin(btnQuitter, new Insets(0, 0, 90, 0));
+        }else{
+            Image image = new Image(Configuration.PATH_TO_IMG + "Defaite.jpg");
+            ImageView im = new ImageView(image);
+
+            stackPane.getChildren().addAll(im, btnJouer, btnQuitter); // hbox with button and text on top of image view
+
+            stackPane.setAlignment(btnJouer, Pos.BOTTOM_CENTER);
+            stackPane.setAlignment(btnQuitter, Pos.BOTTOM_CENTER);
+            stackPane.setMargin(btnJouer, new Insets(0, 0, 10, 0));
+            stackPane.setMargin(btnQuitter, new Insets(0, 0, 50, 0));
+        }
         
         root.getChildren().add(stackPane);
 
@@ -238,6 +281,197 @@ public class Affichage extends Application {
         victoire.setTitle("Pacman");
         victoire.setScene(s);
         victoire.show();
+    }
+    
+    private void lancerPersonnalisation(){
+        
+        // Create the custom dialog.
+        Dialog<Pair<String, String>> dialog = new Dialog<>();
+        dialog.setTitle("Attention");
+        dialog.setHeaderText("Veuillez saisir des valuers entières");
+
+        // Set the icon (must be included in the project).
+        dialog.setGraphic(new ImageView());
+
+        // Set the button types.
+        ButtonType loginButtonType = new ButtonType("OK", ButtonData.OK_DONE);
+        dialog.getDialogPane().getButtonTypes().addAll(loginButtonType);
+
+        // Create the username and password labels and fields.
+        GridPane grid = new GridPane();
+        grid.setHgap(10);
+        grid.setVgap(10);
+        grid.setPadding(new Insets(20, 150, 10, 10));
+
+        TextField x = new TextField();
+        x.setPromptText("Largeur");
+        TextField y = new TextField();
+        y.setPromptText("Hauteur");
+
+        grid.add(new Label("Largeur :"), 0, 0);
+        grid.add(x, 1, 0);
+        grid.add(new Label("Hauteur :"), 0, 1);
+        grid.add(y, 1, 1);
+
+        //Disable du boutton de validation.
+        Node loginButton = dialog.getDialogPane().lookupButton(loginButtonType);
+        loginButton.setDisable(true);
+
+        // Validation.
+        x.textProperty().addListener((observable, oldValue, newValue) -> {
+            if (y.getText()!="") {
+                loginButton.setDisable(newValue.trim().isEmpty());
+            }
+        });
+        y.textProperty().addListener((observable, oldValue, newValue) -> {
+            if (x.getText()!="") {
+                loginButton.setDisable(newValue.trim().isEmpty());
+            }
+        });
+
+        dialog.getDialogPane().setContent(grid);
+
+        // Request focus on the username field by default.
+        Platform.runLater(() -> x.requestFocus());
+
+        // Convert the result to a username-password-pair when the login button is clicked.
+        dialog.setResultConverter(dialogButton -> {
+            if (dialogButton == loginButtonType) {
+                return new Pair<>(x.getText(), y.getText());
+            }
+            return null;
+        });
+
+        Optional<Pair<String, String>> result = dialog.showAndWait();
+
+        result.ifPresent(xy -> {
+            System.out.println("x=" + xy.getKey() + ", y=" + xy.getValue());
+            Personnalisation(Integer.parseInt(xy.getKey()),  Integer.parseInt(xy.getValue()));
+        });
+
+        
+    }
+    
+    private void Personnalisation(int x, int y){
+        //Ajout des items à la grille
+        StackPane root = new StackPane();//Ajout de la grille
+        
+        grid = new GridPane();
+        
+        Configuration.setHauteurGrille(x);
+        Configuration.setLargeurGrille(y);
+
+        // initialisation de la grille (sans image)
+        Random rand = new Random();
+        Color[] colors = {Color.BLACK, Color.BLUE, Color.GREEN, Color.RED};
+        int i = 0;
+        int j = 0;
+        for (i = 0; i < y; i++) {
+            for (j = 0; j < x; j++) {
+                CaseGrilleJava rect = new CaseGrilleJava(Configuration.IMG_WIDTH-1,Configuration.IMG_HEIGHT-1);
+                rect.setStyle("-fx-fill: black; -fx-stroke: white; -fx-stroke-width: 0.5;");
+                rect.setOnMouseClicked(new EventHandler<MouseEvent>()
+                {
+                    @Override
+                    public void handle(MouseEvent t) {
+                        if (t.getButton() == MouseButton.SECONDARY) {
+                            switch(rect.type){
+                                case INKY:
+                                    rect.type = CaseGrilleJava.typeCase.BLINKY;
+                                    rect.setFill(Color.RED);
+                                    break;
+                                case BLINKY:
+                                    rect.type = CaseGrilleJava.typeCase.PINKY;
+                                    rect.setFill(Color.rgb(229, 184, 242, 1));
+                                    break;
+                                case PINKY:
+                                    rect.type = CaseGrilleJava.typeCase.CLYDE;
+                                    rect.setFill(Color.rgb(255, 205, 97, 1));
+                                    break;
+                                case CLYDE:
+                                    rect.type = CaseGrilleJava.typeCase.COULOIR;
+                                    rect.setFill(Color.BLACK);
+                                    break;
+                                default :
+                                    rect.type = CaseGrilleJava.typeCase.INKY;
+                                    rect.setFill(Color.rgb(134, 236, 247, 1));
+                                    break;
+                            }
+                        }
+                        else if(t.getButton() == MouseButton.MIDDLE){
+                            switch(rect.type){
+                                case PACMAN:
+                                    rect.type = CaseGrilleJava.typeCase.COULOIR;
+                                    rect.setFill(Color.BLACK);
+                                    break;
+                                default :
+                                    rect.type = CaseGrilleJava.typeCase.PACMAN;
+                                    rect.setFill(Color.rgb(105, 99, 44, 1));
+                                    break;
+                            }
+                        }
+                        else{
+                           switch(rect.type){
+                            case COULOIR:
+                                rect.type = CaseGrilleJava.typeCase.MUR;
+                                rect.setFill(Color.BLUE);
+                                break;
+                            case MUR:
+                                rect.type = CaseGrilleJava.typeCase.PAC_GOMME;
+                                rect.setFill(Color.YELLOW);
+                                break;
+                            case PAC_GOMME:
+                                rect.type = CaseGrilleJava.typeCase.SUPER_PAC_GOMME;
+                                rect.setFill(Color.YELLOWGREEN);
+                                break;
+                            case SUPER_PAC_GOMME:
+                                rect.type = CaseGrilleJava.typeCase.COULOIR;
+                                rect.setFill(Color.BLACK);
+                                break;
+                           case INKY:
+                                rect.type = CaseGrilleJava.typeCase.COULOIR;
+                                rect.setFill(Color.BLACK);
+                                break;
+                            case BLINKY:
+                                rect.type = CaseGrilleJava.typeCase.COULOIR;
+                                rect.setFill(Color.BLACK);
+                                break;
+                            case PINKY:
+                                rect.type = CaseGrilleJava.typeCase.COULOIR;
+                                rect.setFill(Color.BLACK);
+                                break;
+                            case CLYDE:
+                                rect.type = CaseGrilleJava.typeCase.COULOIR;
+                                rect.setFill(Color.BLACK);
+                                break;
+                            }
+                        } 
+                    }
+                });
+                int n = rand.nextInt(4);
+                //rect.setFill(colors[n]);
+                grid.add(rect, i, j);
+            }
+        }
+        
+        Button btnOk = new Button("OK");
+        btnOk.setMinSize(120, Configuration.IMG_HEIGHT);
+        btnOk.setOnAction(new EventHandler<ActionEvent>() {
+            @Override public void handle(ActionEvent e) {
+                maGrille.setCustomMap(x, y, grid);
+                start(pStage);
+            }
+        });
+        grid.add(btnOk, i/2, j+1,i/2, 1);
+
+        root.getChildren().add(grid); 
+        root.setStyle("-fx-background-color: #000000;");
+        Image imIcon = new Image(Configuration.PATH_TO_IMG + "icon.png",Configuration.IMG_WIDTH,Configuration.IMG_HEIGHT,false,false);
+        scene = new Scene(root, Configuration.WINDOW_WIDTH, Configuration.WINDOW_HEIGTH+Configuration.IMG_HEIGHT, Paint.valueOf("Black"));
+        pStage.getIcons().add(imIcon);
+        pStage.setTitle("Personnalisation de la map custom");
+        pStage.setScene(scene);
+        pStage.show();
     }
     
     private void lancerPartie(){
@@ -278,11 +512,20 @@ public class Affichage extends Application {
                         maGrille.Victoire = false;
                         Platform.runLater(new Runnable() {
                             @Override public void run() {
-                                lancerEcranVictoire();
+                                lancerEcran(false);
                             }
                         });
                         maGrille.stop();
-                    }else{
+                    }else if(maGrille.Defaite){
+                        maGrille.Defaite = false;
+                        Platform.runLater(new Runnable() {
+                            @Override public void run() {
+                                lancerEcran(true);
+                            }
+                        });
+                        maGrille.stop();
+                    }
+                    else{
                         if (maGrille.tabCaseStatique.length != size_x || maGrille.tabCaseStatique[0].length != size_y ) {
                             majTabAffichage(maGrille.tabCaseStatique.length, maGrille.tabCaseStatique[0].length);
                         }
