@@ -16,6 +16,7 @@ import Modele.Grille.Grille;
 import Modele.Grille.Point;
 import java.io.File;
 import java.io.FileWriter;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
@@ -40,6 +41,9 @@ import java.util.Observer;
 import java.util.Optional;
 import java.util.Random;
 import javafx.application.Platform;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -50,6 +54,8 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.ButtonBar.ButtonData;
 import javafx.scene.control.ButtonType;
+import javafx.scene.control.CheckBox;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.Dialog;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
@@ -105,6 +111,8 @@ public class Affichage extends Application {
     private Scene scene;
     
     private Stage pStage;
+    
+    private String niveauEnCours = "";
 
     private int animationPmIndex = 0;
     private Timeline pmAnimationTimeLine;
@@ -154,7 +162,7 @@ public class Affichage extends Application {
         btnJouer.setOnAction(new EventHandler<ActionEvent>() {
             @Override public void handle(ActionEvent e) {
                 //Stage st = new Stage(StageStyle.DECORATED);
-                lancerPartie();
+                lancerPartie("");
             }
         });
         Button btnPerso = new Button("Personnaliser");
@@ -230,7 +238,8 @@ public class Affichage extends Application {
         btnJouer.setOnAction(new EventHandler<ActionEvent>() {
             @Override public void handle(ActionEvent e) {
                 //Stage st = new Stage(StageStyle.DECORATED);
-                lancerPartie();
+                victoire.close();
+                lancerPartie(niveauEnCours);
             }
         });
         Button btnQuitter = new Button("Quiter");
@@ -249,8 +258,8 @@ public class Affichage extends Application {
             btnSuivant.setMinSize(120, 30);
             btnSuivant.setOnAction(new EventHandler<ActionEvent>() {
                 @Override public void handle(ActionEvent e) {
-                    Platform.exit();
-                    System.exit(0);
+                    victoire.close();
+                    lancerPartie("");
                 }
             });
             
@@ -262,9 +271,9 @@ public class Affichage extends Application {
             stackPane.setAlignment(btnJouer, Pos.BOTTOM_CENTER);
             stackPane.setAlignment(btnSuivant, Pos.BOTTOM_CENTER);
             stackPane.setAlignment(btnQuitter, Pos.BOTTOM_CENTER);
-            stackPane.setMargin(btnJouer, new Insets(0, 0, 10, 0));
-            stackPane.setMargin(btnSuivant, new Insets(0, 0, 50, 0));
-            stackPane.setMargin(btnQuitter, new Insets(0, 0, 90, 0));
+            stackPane.setMargin(btnJouer, new Insets(0, 0, 50, 0));
+            stackPane.setMargin(btnSuivant, new Insets(0, 0, 90, 0));
+            stackPane.setMargin(btnQuitter, new Insets(0, 0, 10, 0));
         }else{
             Image image = new Image(Configuration.PATH_TO_IMG + "Defaite.jpg");
             ImageView im = new ImageView(image);
@@ -273,8 +282,8 @@ public class Affichage extends Application {
 
             stackPane.setAlignment(btnJouer, Pos.BOTTOM_CENTER);
             stackPane.setAlignment(btnQuitter, Pos.BOTTOM_CENTER);
-            stackPane.setMargin(btnJouer, new Insets(0, 0, 10, 0));
-            stackPane.setMargin(btnQuitter, new Insets(0, 0, 50, 0));
+            stackPane.setMargin(btnJouer, new Insets(0, 0, 50, 0));
+            stackPane.setMargin(btnQuitter, new Insets(0, 0, 10, 0));
         }
         
         root.getChildren().add(stackPane);
@@ -290,7 +299,7 @@ public class Affichage extends Application {
         // Create the custom dialog.
         Dialog<Pair<String, String>> dialog = new Dialog<>();
         dialog.setTitle("Attention");
-        dialog.setHeaderText("Veuillez saisir des valuers entières");
+        dialog.setHeaderText("Veuillez saisir des valeurs entières positives");
 
         // Set the icon (must be included in the project).
         dialog.setGraphic(new ImageView());
@@ -306,13 +315,13 @@ public class Affichage extends Application {
         grid.setPadding(new Insets(20, 150, 10, 10));
 
         TextField x = new TextField();
-        x.setPromptText("Largeur");
+        x.setPromptText("15 <= Hauteur <= 40");
         TextField y = new TextField();
-        y.setPromptText("Hauteur");
+        y.setPromptText("15 <= Largeur <= 40");
 
-        grid.add(new Label("Largeur :"), 0, 0);
+        grid.add(new Label("Hauteur :"), 0, 0);
         grid.add(x, 1, 0);
-        grid.add(new Label("Hauteur :"), 0, 1);
+        grid.add(new Label("Largeur :"), 0, 1);
         grid.add(y, 1, 1);
 
         //Disable du boutton de validation.
@@ -333,8 +342,8 @@ public class Affichage extends Application {
 
         dialog.getDialogPane().setContent(grid);
 
-        // Request focus on the username field by default.
-        Platform.runLater(() -> x.requestFocus());
+        // Pour enlever le focus du textfield
+        Platform.runLater(() -> grid.requestFocus());
 
         // Convert the result to a username-password-pair when the login button is clicked.
         dialog.setResultConverter(dialogButton -> {
@@ -350,8 +359,246 @@ public class Affichage extends Application {
             System.out.println("x=" + xy.getKey() + ", y=" + xy.getValue());
             Personnalisation(Integer.parseInt(xy.getKey()),  Integer.parseInt(xy.getValue()));
         });
+    }
+    
+    private ArrayList<String> finder(String folder){
+        File dir = new File(folder);
 
+        File[] files = dir.listFiles(new FilenameFilter() { 
+                 public boolean accept(File dir, String filename)
+                      { return filename.endsWith(".txt"); }
+        } );
         
+        ArrayList<String> filesName = new ArrayList<String>();
+        
+        for (int i = 0; i < files.length; i++) {
+            filesName.add(files[i].getName());
+        }
+        
+        return filesName;
+    }
+    
+    private String popupSelectionNiveau(){
+        // Create the custom dialog.
+        Dialog<String> dialog = new Dialog<>();
+        dialog.setTitle("Attention");
+        dialog.setHeaderText("Veuillez choisir un niveau");
+
+        // Set the icon (must be included in the project).
+        dialog.setGraphic(new ImageView());
+
+        // Set the button types.
+        ButtonType loginButtonType = new ButtonType("OK", ButtonData.OK_DONE);
+        dialog.getDialogPane().getButtonTypes().addAll(loginButtonType);
+
+        // Create the username and password labels and fields.
+        GridPane grid = new GridPane();
+        grid.setHgap(10);
+        grid.setVgap(10);
+        grid.setPadding(new Insets(20, 150, 10, 10));
+        
+        final ComboBox comboBox = new ComboBox();
+        comboBox.getItems().addAll(finder(Configuration.PATH_MAPS_ASSETS_FOLDER));
+        
+        grid.add(new Label("Selection du niveau :"), 0, 0);
+        grid.add(comboBox, 1, 0);
+
+        //Disable du boutton de validation.
+        Node loginButton = dialog.getDialogPane().lookupButton(loginButtonType);
+        loginButton.setDisable(true);
+
+        // Validation.
+        comboBox.getSelectionModel().selectedItemProperty().addListener( (options, oldValue, newValue) -> {
+            if (newValue == null) {
+                loginButton.setDisable(true);
+            }else{
+                loginButton.setDisable(false);
+            }
+         }
+        ); 
+        
+
+        dialog.getDialogPane().setContent(grid);
+        
+        // Convert the result to a username-password-pair when the login button is clicked.
+        dialog.setResultConverter(dialogButton -> {
+            if (dialogButton == loginButtonType) {
+                return comboBox.getSelectionModel().getSelectedItem().toString();
+            }
+            return null;
+        });
+
+        Optional<String> result = dialog.showAndWait();
+        
+        if (result.isPresent()) {
+            return result.get();
+        }else{
+            return "";
+        }
+    }
+    
+    private String creerPopupChoixFichier(){
+        // Create the custom dialog.
+        Dialog<String> dialog = new Dialog<>();
+        dialog.setTitle("Attention");
+        dialog.setHeaderText("Veuillez choisir un fichier pour enregistrer la map");
+
+        // Set the icon (must be included in the project).
+        dialog.setGraphic(new ImageView());
+
+        // Set the button types.
+        ButtonType loginButtonType = new ButtonType("OK", ButtonData.OK_DONE);
+        dialog.getDialogPane().getButtonTypes().addAll(loginButtonType);
+
+        // Create the username and password labels and fields.
+        GridPane grid = new GridPane();
+        grid.setHgap(10);
+        grid.setVgap(10);
+        grid.setPadding(new Insets(20, 150, 10, 10));
+        
+        final ComboBox comboBox = new ComboBox();
+        comboBox.getItems().addAll(finder(Configuration.PATH_MAPS_ASSETS_FOLDER));
+        
+        final CheckBox cb = new CheckBox("Créer un nouveau fichier");
+        final TextField tf = new TextField();
+        tf.setPromptText("custom.txt");
+        tf.setVisible(false);
+        final Label lb = new Label("Merci de ne pas utiliser le mot 'niveau' dans le nom du fichier");
+        lb.setVisible(false);
+
+        grid.add(new Label("Selection du fichier :"), 0, 0);
+        grid.add(comboBox, 1, 0);
+        grid.add(cb, 0, 1);
+        grid.add(tf, 1, 1);
+        grid.add(lb, 2, 1);
+
+        //Disable du boutton de validation.
+        Node loginButton = dialog.getDialogPane().lookupButton(loginButtonType);
+        loginButton.setDisable(true);
+
+        // Validation.
+        cb.selectedProperty().addListener(new ChangeListener<Boolean>() {
+            public void changed(ObservableValue<? extends Boolean> ov, Boolean old_val, Boolean new_val) {
+                tf.setVisible(new_val);
+                lb.setVisible(new_val);
+                if (new_val) {
+                    comboBox.getSelectionModel().clearSelection();
+                    loginButton.setDisable(true);
+                }
+            }
+        });
+        tf.textProperty().addListener((observable, oldValue, newValue) -> {
+            loginButton.setDisable(newValue.trim().isEmpty());
+        });
+        comboBox.getSelectionModel().selectedItemProperty().addListener( (options, oldValue, newValue) -> {
+            if (newValue == null) {
+                loginButton.setDisable(true);
+            }else{
+                cb.setSelected(false);
+                loginButton.setDisable(false);
+            }
+         }
+        ); 
+        
+
+        dialog.getDialogPane().setContent(grid);
+        
+        // Convert the result to a username-password-pair when the login button is clicked.
+        dialog.setResultConverter(dialogButton -> {
+            if (dialogButton == loginButtonType) {
+                if (comboBox.getSelectionModel().getSelectedItem()==null) {
+                    return tf.getText();
+                }else{
+                    return comboBox.getSelectionModel().getSelectedItem().toString();
+                }
+            }
+            return null;
+        });
+
+        Optional<String> result = dialog.showAndWait();
+        
+        if (result.isPresent()) {
+            return result.get();
+        }else{
+            return "";
+        }
+    }
+    
+    private void creerLegendePersonnalisation(){
+        // Create the custom dialog.
+        Dialog<Pair<String, String>> dialog = new Dialog<>();
+        dialog.setTitle("Légende");
+        dialog.setHeaderText("");
+
+        // Set the icon (must be included in the project).
+        dialog.setGraphic(new ImageView());
+
+        // Set the button types.
+        ButtonType loginButtonType = new ButtonType("OK", ButtonData.OK_DONE);
+        dialog.getDialogPane().getButtonTypes().addAll(loginButtonType);
+
+        // Create the username and password labels and fields.
+        GridPane grid = new GridPane();
+        grid.setHgap(10);
+        grid.setVgap(10);
+        grid.setPadding(new Insets(20, 150, 10, 10));
+        
+        Rectangle couloir = new Rectangle(Configuration.IMG_WIDTH-1,Configuration.IMG_HEIGHT-1);
+        couloir.setFill(Color.BLACK);
+        grid.add(couloir, 0, 8);
+        grid.add(new Label("Couloir"), 1, 8);
+        
+        Rectangle mur = new Rectangle(Configuration.IMG_WIDTH-1,Configuration.IMG_HEIGHT-1);
+        mur.setFill(Color.BLUE);
+        grid.add(mur, 0, 0);
+        grid.add(new Label("Mur (1 click gauche)"), 1, 0);
+        
+        Rectangle pacGomme = new Rectangle(Configuration.IMG_WIDTH-1,Configuration.IMG_HEIGHT-1);
+        pacGomme.setFill(Color.YELLOW);
+        grid.add(pacGomme, 0, 1);
+        grid.add(new Label("Pac-Gomme (2 clicks gauche)"), 1, 1);
+        
+        Rectangle superPacGomme = new Rectangle(Configuration.IMG_WIDTH-1,Configuration.IMG_HEIGHT-1);
+        superPacGomme.setFill(Color.YELLOWGREEN);
+        grid.add(superPacGomme, 0, 2);
+        grid.add(new Label("Super Pac-Gomme (3 clicks gauche)"), 1, 2);
+        
+        Rectangle Inky = new Rectangle(Configuration.IMG_WIDTH-1,Configuration.IMG_HEIGHT-1);
+        Inky.setFill(Color.rgb(134, 236, 247, 1));
+        grid.add(Inky, 0, 3);
+        grid.add(new Label("Inky (1 click droit)"), 1, 3);
+        
+        Rectangle BLINKY = new Rectangle(Configuration.IMG_WIDTH-1,Configuration.IMG_HEIGHT-1);
+        BLINKY.setFill(Color.RED);
+        grid.add(BLINKY, 0, 4);
+        grid.add(new Label("Blinky (2 clicks droit)"), 1, 4);
+        
+        Rectangle PINKY = new Rectangle(Configuration.IMG_WIDTH-1,Configuration.IMG_HEIGHT-1);
+        PINKY.setFill(Color.rgb(229, 184, 242, 1));
+        grid.add(PINKY, 0, 5);
+        grid.add(new Label("Pinky (3 clicks droit)"), 1, 5);
+        
+        Rectangle CLYDE = new Rectangle(Configuration.IMG_WIDTH-1,Configuration.IMG_HEIGHT-1);
+        CLYDE.setFill(Color.rgb(255, 205, 97, 1));
+        grid.add(CLYDE, 0, 6);
+        grid.add(new Label("Clyde (4 clicks droits)"), 1, 6);
+        
+        Rectangle pacman = new Rectangle(Configuration.IMG_WIDTH-1,Configuration.IMG_HEIGHT-1);
+        pacman.setFill(Color.rgb(105, 99, 44, 1));
+        grid.add(pacman, 0, 7);
+        grid.add(new Label("Pacman (1 click molette)"), 1, 7);
+
+        dialog.getDialogPane().setContent(grid);
+
+        // Convert the result to a username-password-pair when the login button is clicked.
+//        dialog.setResultConverter(dialogButton -> {
+//            if (dialogButton == loginButtonType) {
+//                return null;
+//            }
+//            return null;
+//        });
+
+        dialog.show();
     }
     
     private void Personnalisation(int x, int y){
@@ -364,8 +611,6 @@ public class Affichage extends Application {
         Configuration.setLargeurGrille(y);
 
         // initialisation de la grille (sans image)
-        Random rand = new Random();
-        Color[] colors = {Color.BLACK, Color.BLUE, Color.GREEN, Color.RED};
         int i = 0;
         int j = 0;
         for (i = 0; i < y; i++) {
@@ -450,33 +695,54 @@ public class Affichage extends Application {
                         } 
                     }
                 });
-                int n = rand.nextInt(4);
-                //rect.setFill(colors[n]);
                 grid.add(rect, i, j);
             }
         }
+        grid.add(new Label("Attention à placer au minimum :"), 0, j+1,i, 1);
+        grid.add(new Label("- Une pacgomme."), 0, j+2,i, 1);
+        grid.add(new Label("- Pacman."), 0, j+3,i, 1);
+        grid.add(new Label("- les 4 fantômes."), 0, j+4,i, 1);
+        
         
         Button btnOk = new Button("OK");
         btnOk.setMinSize(120, Configuration.IMG_HEIGHT);
         btnOk.setOnAction(new EventHandler<ActionEvent>() {
             @Override public void handle(ActionEvent e) {
-                maGrille.setCustomMap(x, y, grid);
+                String fichier = creerPopupChoixFichier();
+                if (fichier.isEmpty()) {
+                    fichier = Configuration.PATH_MAPS_ASSETS_FOLDER + "\\CustomMap.txt";
+                }else{
+                    if (!fichier.contains(".txt")) {
+                        fichier = fichier.concat(".txt");
+                    }
+                    fichier = Configuration.PATH_MAPS_ASSETS_FOLDER + "\\" + fichier;
+                }
+                maGrille.setCustomMap(x, y, grid, fichier);
                 start(pStage);
             }
         });
-        grid.add(btnOk, i/2, j+1,i/2, 1);
+        grid.add(btnOk, i/2, j+5,i/2, 1);
+        
+        Button btnLegende = new Button("Légende");
+        btnLegende.setMinSize(120, Configuration.IMG_HEIGHT);
+        btnLegende.setOnAction(new EventHandler<ActionEvent>() {
+            @Override public void handle(ActionEvent e) {
+                creerLegendePersonnalisation();
+            }
+        });
+        grid.add(btnLegende, 0, j+5,i/2, 1);
 
         root.getChildren().add(grid); 
         root.setStyle("-fx-background-color: #000000;");
         Image imIcon = new Image(Configuration.PATH_TO_IMG + "icon.png",Configuration.IMG_WIDTH,Configuration.IMG_HEIGHT,false,false);
-        scene = new Scene(root, Configuration.WINDOW_WIDTH, Configuration.WINDOW_HEIGTH+Configuration.IMG_HEIGHT, Paint.valueOf("Black"));
+        scene = new Scene(root, Configuration.WINDOW_WIDTH, Configuration.WINDOW_HEIGTH+4*Configuration.IMG_HEIGHT, Paint.valueOf("Black"));
         pStage.getIcons().add(imIcon);
         pStage.setTitle("Personnalisation de la map custom");
         pStage.setScene(scene);
         pStage.show();
     }
     
-    private void lancerPartie(){
+    private void lancerPartie(String lvl){
 
         //Ajout des items à la grille
         StackPane root = new StackPane();//Ajout de la grille
@@ -514,18 +780,20 @@ public class Affichage extends Application {
                         maGrille.Victoire = false;
                         Platform.runLater(new Runnable() {
                             @Override public void run() {
+                                maGrille.stop();
+                                maGrille = new Grille();
                                 lancerEcran(false);
                             }
                         });
-                        maGrille.stop();
                     }else if(maGrille.Defaite){
                         maGrille.Defaite = false;
                         Platform.runLater(new Runnable() {
                             @Override public void run() {
+                                maGrille.stop();
+                                maGrille = new Grille();
                                 lancerEcran(true);
                             }
                         });
-                        maGrille.stop();
                     }
                     else{
                         if (maGrille.tabCaseStatique.length != size_x || maGrille.tabCaseStatique[0].length != size_y ) {
@@ -537,8 +805,16 @@ public class Affichage extends Application {
                 }
             };
             
+            String niveau = "";
+            if (lvl.isEmpty()) {
+                niveau = popupSelectionNiveau();
+            }else{
+                niveau = lvl;
+            }
+            niveauEnCours = niveau;
+            
             maGrille.addObserver(o);
-            maGrille.lireGrilleFichier(Configuration.CHEMIN_FICHIER_CUSTOMMAP);
+            maGrille.lireGrilleFichier(Configuration.PATH_MAPS_ASSETS_FOLDER + "\\" + niveau);
             maGrille.start();
             
             grid.requestFocus();
@@ -600,11 +876,10 @@ public class Affichage extends Application {
                                 //Platform.runLater(maGrille);
                                 //maGrille.start();
                                 lancerPartie();
+                                maGrille = new Grille();
+                                lancerPartie(niveauEnCours);
                             }else{
-                                //maGrille.lireGrilleFichier(Configuration.CHEMIN_FICHIER_CUSTOMMAP);
-                                //Platform.runLater(maGrille);
-                                //maGrille.start();
-                                lancerPartie();
+                                lancerPartie(niveauEnCours);
                             }
                             break;
                     }

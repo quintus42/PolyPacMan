@@ -441,7 +441,7 @@ public class Grille extends Observable implements Runnable{
                 }
             }
             buffer.close();
-            buffer = new BufferedReader(new FileReader(Configuration.CHEMIN_FICHIER_CUSTOMMAP)); //on ouvre le fichier une première fois pour le nb de ligne
+            buffer = new BufferedReader(new FileReader(cheminFichier)); //on ouvre le fichier une première fois pour le nb de ligne
             int y = 0;
             tabCaseStatique = new CaseStatique[ligneLength][nbLigne];
             Configuration.setHauteurGrille(nbLigne);
@@ -523,13 +523,13 @@ public class Grille extends Observable implements Runnable{
         return true;
     }
     
-    public boolean setCustomMap(int x, int y, GridPane grid){
+    public boolean setCustomMap(int x, int y, GridPane grid, String fichier){
         try {
-            File f = new File("src/Assets/Maps/CustomMap.txt");
+            File f = new File(fichier);
             String path = f.getAbsolutePath();
             f.createNewFile();
             System.out.println("chemin du fichier : " + path);
-            FileWriter myWriter = new FileWriter("src/Assets/Maps/CustomMap.txt");
+            FileWriter myWriter = new FileWriter(fichier);
             for (int i = 0; i < x; i++) {
                 for (int j = 0; j < y; j++) {
                     CaseGrilleJava c = (CaseGrilleJava)getNodeByRowColumnIndex(i, j, grid);

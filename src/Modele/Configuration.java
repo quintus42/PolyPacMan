@@ -19,6 +19,8 @@ public class Configuration {
     public static int WINDOW_HEIGTH = IMG_HEIGHT * HAUTEUR_GRILLE; // Y
     
     public final static String CHEMIN_FICHIER_CUSTOMMAP = "src/Assets/Maps/CustomMap.txt";
+    
+    public final static String PATH_MAPS_ASSETS_FOLDER = "src\\Assets\\Maps";
 
     public static void setHauteurGrille(int hauteur){
         HAUTEUR_GRILLE = hauteur;
