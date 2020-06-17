@@ -868,6 +868,7 @@ public class Affichage extends Application {
                     switch(event.getCode()){
                         case ESCAPE: 
                             maGrille.stop();
+                            maGrille = new Grille();
                             start(pStage);
                             break;
                         case Z :
