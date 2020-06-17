@@ -6,18 +6,14 @@
 package Vue;
 
 import Modele.Case.CaseGrilleJava;
-import Modele.Case.Couloir;
-import Modele.Case.Mur;
-import Modele.Case.PacGomme;
-import Modele.Case.SuperPacGomme;
 import Modele.Configuration;
 import Modele.Entite.*;
 import Modele.Grille.Grille;
-import Modele.Grille.Point;
+import com.sun.javafx.scene.control.skin.EmbeddedTextContextMenuContent;
+
 import java.io.File;
-import java.io.FileWriter;
 import java.io.FilenameFilter;
-import java.io.IOException;
+
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.application.Application;
@@ -27,31 +23,24 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Paint;
 import javafx.stage.Stage;
 
-//import java.awt.*;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.Optional;
-import java.util.Random;
+
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.Parent;
-import javafx.scene.canvas.Canvas;
-import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.ButtonBar.ButtonData;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.CheckBox;
@@ -59,25 +48,13 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.Dialog;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
-import javafx.scene.input.KeyCode;
-import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.Background;
-import javafx.scene.layout.BackgroundImage;
-import javafx.scene.layout.BackgroundPosition;
-import javafx.scene.layout.BackgroundRepeat;
-import javafx.scene.layout.BackgroundSize;
-import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
-import javafx.scene.text.Font;
-import javafx.scene.text.FontWeight;
-import javafx.scene.text.Text;
 import javafx.stage.StageStyle;
 import javafx.stage.*;
 import javafx.util.Duration;
-import javafx.scene.input.InputEvent;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.shape.Box;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.shape.Rectangle;
 import javafx.util.Pair;
 
@@ -90,15 +67,15 @@ public class Affichage extends Application {
     // <editor-fold defaultstate="collapsed" desc="Variables">
     
     //Initialisation des modèles
-    private PacMan pm = new PacMan();
-    private PacGomme pg = new PacGomme();
-    private SuperPacGomme spg = new SuperPacGomme();
-    private Blinky rGhost = new Blinky();
-    private Pinky pGhost = new Pinky();
-    private Inky bGhost = new Inky();
-    private Clyde oGhost = new Clyde();
-    private Mur wall = new Mur();
-    private Couloir corridor = new Couloir();
+    private final PacMan pm = new PacMan();
+//    private PacGomme pg = new PacGomme();
+//    private SuperPacGomme spg = new SuperPacGomme();
+//    private Blinky rGhost = new Blinky();
+//    private Pinky pGhost = new Pinky();
+//    private Inky bGhost = new Inky();
+//    private Clyde oGhost = new Clyde();
+//    private Mur wall = new Mur();
+//    private Couloir corridor = new Couloir();
 
     private Grille maGrille = new Grille();
     private GridPane grid = new GridPane();
@@ -113,8 +90,13 @@ public class Affichage extends Application {
     private Stage pStage;
     
     private String niveauEnCours = "";
-
+    
+    private Boolean modeHistoire = false;
+    
     private int animationPmIndex = 0;
+    
+    private Label lifes = new Label("3");
+    
     private Timeline pmAnimationTimeLine;
     // </editor-fold>
 
@@ -132,7 +114,7 @@ public class Affichage extends Application {
                 grid.add(img, i, j);
             }
         }
-        root.getChildren().add(grid); 
+        root.getChildren().add(grid);
         root.setStyle("-fx-background-color: #808080;");
         Image imIcon = new Image(Configuration.PATH_TO_IMG + "icon.png",Configuration.IMG_WIDTH,Configuration.IMG_HEIGHT,false,false);
         Scene scene = new Scene(root, Configuration.WINDOW_WIDTH, Configuration.WINDOW_HEIGTH, Paint.valueOf("Black"));
@@ -157,14 +139,26 @@ public class Affichage extends Application {
             }
         });
 
-        Button btnJouer = new Button("Jouer");
-        btnJouer.setMinSize(120, 30);
-        btnJouer.setOnAction(new EventHandler<ActionEvent>() {
+        Button btnJouerHistoire = new Button("Jouer (Histoire)");
+        btnJouerHistoire.setMinSize(120, 30);
+        btnJouerHistoire.setOnAction(new EventHandler<ActionEvent>() {
             @Override public void handle(ActionEvent e) {
                 //Stage st = new Stage(StageStyle.DECORATED);
+                modeHistoire = true;
+                lancerPartie("niveau1.txt");
+            }
+        });
+        
+        Button btnJouerPerso = new Button("Jouer (choix du niveau)");
+        btnJouerPerso.setMinSize(120, 30);
+        btnJouerPerso.setOnAction(new EventHandler<ActionEvent>() {
+            @Override public void handle(ActionEvent e) {
+                //Stage st = new Stage(StageStyle.DECORATED);
+                modeHistoire = false;
                 lancerPartie("");
             }
         });
+        
         Button btnPerso = new Button("Personnaliser");
         btnPerso.setMinSize(120, 30);
         btnPerso.setOnAction(new EventHandler<ActionEvent>() {
@@ -186,14 +180,16 @@ public class Affichage extends Application {
         ImageView im = new ImageView(image);
 
         StackPane stackPane = new StackPane();
-        stackPane.getChildren().addAll(im, btnJouer, btnPerso, btnQuitter); // hbox with button and text on top of image view
+        stackPane.getChildren().addAll(im, btnJouerHistoire, btnJouerPerso, btnPerso, btnQuitter); // hbox with button and text on top of image view
         
-        stackPane.setAlignment(btnJouer, Pos.BOTTOM_CENTER);
+        stackPane.setAlignment(btnJouerHistoire, Pos.BOTTOM_CENTER);
+        stackPane.setAlignment(btnJouerPerso, Pos.BOTTOM_CENTER);
         stackPane.setAlignment(btnPerso, Pos.BOTTOM_CENTER);
         stackPane.setAlignment(btnQuitter, Pos.BOTTOM_CENTER);
-        stackPane.setMargin(btnJouer, new Insets(0, 0, 120, 0));
-        stackPane.setMargin(btnPerso, new Insets(0, 0, 80, 0));
-        stackPane.setMargin(btnQuitter, new Insets(0, 0, 40, 0));
+        stackPane.setMargin(btnJouerHistoire, new Insets(0, 0, 140, 0));
+        stackPane.setMargin(btnJouerPerso, new Insets(0, 0, 100, 0));
+        stackPane.setMargin(btnPerso, new Insets(0, 0, 60, 0));
+        stackPane.setMargin(btnQuitter, new Insets(0, 0, 20, 0));
         
         root.getChildren().add(stackPane);
 
@@ -378,11 +374,11 @@ public class Affichage extends Application {
         return filesName;
     }
     
-    private String popupSelectionNiveau(){
+    private String popupSelectionNiveau(String headerTxt){
         // Create the custom dialog.
         Dialog<String> dialog = new Dialog<>();
-        dialog.setTitle("Attention");
-        dialog.setHeaderText("Veuillez choisir un niveau");
+        dialog.setTitle(headerTxt);
+        dialog.setHeaderText("Choix du niveau");
 
         // Set the icon (must be included in the project).
         dialog.setGraphic(new ImageView());
@@ -463,7 +459,7 @@ public class Affichage extends Application {
         final TextField tf = new TextField();
         tf.setPromptText("custom.txt");
         tf.setVisible(false);
-        final Label lb = new Label("Merci de ne pas utiliser le mot 'niveau' dans le nom du fichier");
+        final Label lb = new Label("Utiliser la forme 'niveaux.txt' (x etant un nombre) pour alimenter le mode histoire");
         lb.setVisible(false);
 
         grid.add(new Label("Selection du fichier :"), 0, 0);
@@ -742,10 +738,22 @@ public class Affichage extends Application {
         pStage.show();
     }
     
+    private String nextLvl(){
+        if (!niveauEnCours.isEmpty()) {
+            char last = niveauEnCours.charAt(niveauEnCours.length()-5);
+            int lvl = Integer.parseInt(String.valueOf(last));
+            String newLvl = niveauEnCours.substring(0, niveauEnCours.length() -5);
+            newLvl = newLvl.concat(String.valueOf(lvl+1));
+            newLvl = newLvl.concat(".txt");
+            return newLvl;
+        }
+        return "";
+    }
+    
     private void lancerPartie(String lvl){
 
         //Ajout des items à la grille
-        StackPane root = new StackPane();//Ajout de la grille
+        BorderPane root = new BorderPane();//Ajout de la grille
         
         grid = new GridPane();
 
@@ -760,10 +768,24 @@ public class Affichage extends Application {
 
         setGridImg();
 
-        root.getChildren().add(grid); 
+        root.setCenter(grid);
         root.setStyle("-fx-background-color: #000000;");
+        
+        BorderPane bottom = new BorderPane();
+        
+        StackPane stack = new StackPane();
+        stack.getChildren().add(new Rectangle(Configuration.WINDOW_WIDTH,100,Color.WHITE));
+        
+        GridPane lifesPane = new GridPane();
+        lifesPane.add(new Label("Nombre de vie(s) restante(s) :"), 0, 0);
+        lifesPane.add(lifes, 1, 0);
+        
+        stack.getChildren().add(lifesPane);
+        
+        root.setBottom(stack);
+        
         Image imIcon = new Image(Configuration.PATH_TO_IMG + "icon.png",Configuration.IMG_WIDTH,Configuration.IMG_HEIGHT,false,false);
-        scene = new Scene(root, Configuration.WINDOW_WIDTH, Configuration.WINDOW_HEIGTH, Paint.valueOf("Black"));
+        scene = new Scene(root, Configuration.WINDOW_WIDTH, Configuration.WINDOW_HEIGTH + Configuration.IMG_HEIGHT, Color.WHITE);
         pStage.getIcons().add(imIcon);
         pStage.setTitle("Pacman");
         pStage.setScene(scene);
@@ -776,6 +798,12 @@ public class Affichage extends Application {
             Observer o =  new Observer() { // l'observer observe l'obervable (update est exécuté dès notifyObservers() est appelé côté modèle )
                 @Override
                 public void update(Observable o, Object arg) {
+                    
+                    Platform.runLater(new Runnable() {
+                            @Override public void run() {
+                                lifes.setText("  " + maGrille.remainingLifes);
+                            }
+                        });
                     if (maGrille.Victoire) {
                         maGrille.Victoire = false;
                         Platform.runLater(new Runnable() {
@@ -806,8 +834,16 @@ public class Affichage extends Application {
             };
             
             String niveau = "";
-            if (lvl.isEmpty()) {
-                niveau = popupSelectionNiveau();
+            if (lvl.isEmpty() && modeHistoire == false) {
+                niveau = popupSelectionNiveau("Attention");
+            }else if(lvl.isEmpty() && modeHistoire){
+                String nextLvl = nextLvl();
+                File f = new File(Configuration.PATH_MAPS_ASSETS_FOLDER + "\\" + nextLvl);
+                if (f.exists()) {
+                    niveau = nextLvl;
+                }else{
+                    niveau = popupSelectionNiveau("Niveau " + nextLvl + " inexistant, veuillez en choisir un nouveau.");
+                }
             }else{
                 niveau = lvl;
             }
@@ -875,7 +911,6 @@ public class Affichage extends Application {
                                 //maGrille.lireGrilleFichier(Configuration.CHEMIN_FICHIER_CUSTOMMAP);
                                 //Platform.runLater(maGrille);
                                 //maGrille.start();
-                                lancerPartie();
                                 maGrille = new Grille();
                                 lancerPartie(niveauEnCours);
                             }else{
@@ -898,42 +933,6 @@ public class Affichage extends Application {
                 }else{
                     tab[i][j].setImage(maGrille.tabCaseStatique[i][j].getImg());
                 }
-//                if(maGrille.tabCaseStatique[i][j] instanceof Mur) {
-//                    tab[i][j].setImage(wall.getImFullWall());
-//                }
-//                else{
-//                    //Rien à ajouter parce que les couloir c'est noir
-//                    tab[i][j].setImage(null);
-//                }
-//                if (maGrille.tabCaseStatique[i][j] instanceof PacGomme) {
-//                    Point posPacman = maGrille.getPositionPacman();
-//                    if (posPacman.equals(new Point(i, j))) {
-//                        ((Couloir)(maGrille.tabCaseStatique[i][j])).mangee = true;
-//                    }
-//                    if (((Couloir)(maGrille.tabCaseStatique[i][j])).mangee) {
-//                        tab[i][j].setImage(null);
-//                    }else{
-//                        tab[i][j].setImage(pg.getImg());
-//                    }
-//                }
-//                else if (maGrille.tabCaseStatique[i][j] instanceof SuperPacGomme){
-//                    Point posPacman = maGrille.getPositionPacman();
-//                    if (posPacman.equals(new Point(i, j))) {
-//                        ((Couloir)(maGrille.tabCaseStatique[i][j])).mangee = true;
-//                    }
-//                    if (((Couloir)(maGrille.tabCaseStatique[i][j])).mangee) {
-//                        tab[i][j].setImage(null);
-//                    }else{
-//                        tab[i][j].setImage(spg.getImSuperPacGomme());
-//                    }
-//                }
-//                else if(maGrille.tabPosition.get(new Point(i,j)) instanceof PacMan){
-//                    tab[i][j].setImage(pm.getImPacman());
-//                }
-//                else if(maGrille.tabPosition.get(new Point(i,j)) instanceof Fantome){
-//                    Fantome ghost = (Fantome) maGrille.tabPosition.get(new Point(i,j));
-//                    tab[i][j].setImage(ghost.getImGhost());
-//                }
                 tab[i][j].setFitWidth(Configuration.IMG_WIDTH);
                 tab[i][j].setFitHeight(Configuration.IMG_HEIGHT);
                 tab[i][j].setPreserveRatio(true);
@@ -944,19 +943,6 @@ public class Affichage extends Application {
     }
     
     private void setGridEntityImg(){
-//        maGrille.tabEntites.forEach((k, v) -> {
-//            if(k instanceof PacMan) {
-//                tab[v.getX()][v.getY()].setImage(pm.getImPacman());
-//            }
-//            else if (k instanceof Fantome){
-//                tab[v.getX()][v.getY()].setImage(Fantome.getImBlueGhost());
-//            }
-//            tab[v.getX()][v.getY()].setFitWidth(Configuration.IMG_WIDTH);
-//            tab[v.getX()][v.getY()].setFitHeight(Configuration.IMG_HEIGHT);
-//            tab[v.getX()][v.getY()].setPreserveRatio(true);
-//            tab[v.getX()][v.getY()].setSmooth(true);
-//            tab[v.getX()][v.getY()].setCache(true);
-//        });
         synchronized(this){
             try {
                 maGrille.tabPosition.forEach((v, k) -> {

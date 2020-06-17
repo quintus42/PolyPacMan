@@ -9,6 +9,7 @@ import Modele.Case.SuperPacGomme;
 import Modele.Configuration;
 import Modele.Entite.Blinky;
 import Modele.Entite.Clyde;
+import Modele.Entite.Direction;
 import Modele.Entite.Entite;
 import Modele.Entite.Fantome;
 import Modele.Entite.Inky;
@@ -50,13 +51,18 @@ public class Grille extends Observable implements Runnable{
     
     private Thread tPartie;
     
+    public String remainingLifes = "3";
+    
     String currentMap;
     
     private Point posPacMan = new Point(0, 0);
+    private Point posInky = new Point(0, 0);
+    private Point posBlinky = new Point(0, 0);
+    private Point posPinky = new Point(0, 0);
+    private Point posClyde = new Point(0, 0);
     
     public Grille(){
         tabCaseStatique = new CaseStatique[Configuration.LARGEUR_GRILLE][Configuration.HAUTEUR_GRILLE];
-
         initialiserEntites();
     }
     
@@ -271,6 +277,7 @@ public class Grille extends Observable implements Runnable{
         boolean isKeyPresent = false;
 
         Entite fantome = null;
+        Entite pacman = null;
         
         while (iterator.hasNext()) { 
 
@@ -283,10 +290,12 @@ public class Grille extends Observable implements Runnable{
             if (newPos.equals(entry.getKey()) && e instanceof PacMan) { 
                 fantome = entry.getValue();
                 isKeyPresent = true; 
+                pacman = e;
             } 
             if (newPos.equals(entry.getKey()) && entry.getValue() instanceof PacMan) { 
                 fantome = e;
                 isKeyPresent = true; 
+                pacman = entry.getValue();
             }
         } 
         
@@ -308,15 +317,23 @@ public class Grille extends Observable implements Runnable{
                 };
                 (new Thread(r)).start();
             }
-            tabCaseStatique[newPos.getX()][newPos.getY()].effectuerTraitement();
-            
+            tabCaseStatique[newPos.getX()][newPos.getY()].effectuerTraitement();     
         }
         if (isKeyPresent) {
             //Si Pacman a manger une super Pac-Gomme, les fantômes sont vulnérables
             if (!superPacGomme) {
+                //Gestion des vies
+                PacMan pm = (PacMan)pacman;
+                pm.lifes = pm.lifes - 1;
+                remainingLifes = String.valueOf(pm.lifes);
                 //Gestion de la fin de la partie
-                partieEnCours = false;
-                Defaite = true;
+                if (pm.lifes <= 0) {
+                    partieEnCours = false;
+                    Defaite = true;
+                }else{
+                    changerDirectionPacman(Direction.AUCUNE);
+                    resetPos();
+                }
             }else{
                 Point pF = lirePositionFantome(fantome);
                 changerPositionEntite(pF, ((Fantome)fantome).getName());
@@ -374,6 +391,7 @@ public class Grille extends Observable implements Runnable{
         tPinky.start();
         tInky.start();
         tBlinky.start();
+        remainingLifes = "3";
     }
     
     public void stop(){
@@ -416,6 +434,14 @@ public class Grille extends Observable implements Runnable{
                 notifyObservers();
             }
         }
+    }
+    
+    private void resetPos(){
+        changerPositionEntite(posPacMan, "PacMan");
+        changerPositionEntite(posInky, "Inky");
+        changerPositionEntite(posBlinky, "Blinky");
+        changerPositionEntite(posPinky, "Pinky");
+        changerPositionEntite(posClyde, "Clyde");
     }
 
     public void pauseGame() {
@@ -467,18 +493,22 @@ public class Grille extends Observable implements Runnable{
                               changerPositionEntite(new Point(i, y), "PacMan");
                               break;
                           case '1' : //Inky
+                              posInky = new Point(i, y);
                               tabCaseStatique[i][y] = new Couloir();
                               changerPositionEntite(new Point(i, y), "Inky");
                               break;
                           case '2' : //Pinky
+                              posPinky = new Point(i, y);
                               tabCaseStatique[i][y] = new Couloir();
                               changerPositionEntite(new Point(i, y), "Pinky");
                               break;
                           case '3' : //Blinky
+                              posBlinky = new Point(i, y);
                               tabCaseStatique[i][y] = new Couloir();
                               changerPositionEntite(new Point(i, y), "Blinky");
                               break;
                           case '4' : //Clyde
+                              posClyde = new Point(i, y);
                               tabCaseStatique[i][y] = new Couloir();
                               changerPositionEntite(new Point(i, y), "Clyde");
                               break;

@@ -25,6 +25,8 @@ public class PacMan extends Entite {
 
     private boolean animation = false;
     public List<Image> images = new ArrayList<>();
+    
+    public int lifes = 3;
 
     public Image getImPacman() {
         synchronized(this){
