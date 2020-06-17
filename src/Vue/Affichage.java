@@ -427,26 +427,14 @@ public class Affichage extends Application {
                                 rect.setFill(Color.YELLOWGREEN);
                                 break;
                             case SUPER_PAC_GOMME:
-                                rect.type = CaseGrilleJava.typeCase.COULOIR;
+                               case INKY:
+                               case BLINKY:
+                               case PINKY:
+                               case CLYDE:
+                                   rect.type = CaseGrilleJava.typeCase.COULOIR;
                                 rect.setFill(Color.BLACK);
                                 break;
-                           case INKY:
-                                rect.type = CaseGrilleJava.typeCase.COULOIR;
-                                rect.setFill(Color.BLACK);
-                                break;
-                            case BLINKY:
-                                rect.type = CaseGrilleJava.typeCase.COULOIR;
-                                rect.setFill(Color.BLACK);
-                                break;
-                            case PINKY:
-                                rect.type = CaseGrilleJava.typeCase.COULOIR;
-                                rect.setFill(Color.BLACK);
-                                break;
-                            case CLYDE:
-                                rect.type = CaseGrilleJava.typeCase.COULOIR;
-                                rect.setFill(Color.BLACK);
-                                break;
-                            }
+                           }
                         } 
                     }
                 });
@@ -491,7 +479,10 @@ public class Affichage extends Application {
                 grid.add(img, i, j);
             }
         }
-
+        // On ajoute une ligne pour le score et les vies
+        for (int j = 0; j < size_y; j++) {
+            grid.add(new ImageView(), size_x, j);
+        }
         setGridImg();
 
         root.getChildren().add(grid); 
