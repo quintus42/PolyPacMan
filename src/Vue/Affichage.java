@@ -9,7 +9,6 @@ import Modele.Case.CaseGrilleJava;
 import Modele.Configuration;
 import Modele.Entite.*;
 import Modele.Grille.Grille;
-import com.sun.javafx.scene.control.skin.EmbeddedTextContextMenuContent;
 
 import java.io.File;
 import java.io.FilenameFilter;
@@ -127,6 +126,7 @@ public class Affichage extends Application {
 
     @Override
     public void start(Stage primaryStage) {
+    
         Group root = new Group();
 
         pStage = primaryStage;
@@ -377,8 +377,8 @@ public class Affichage extends Application {
     private String popupSelectionNiveau(String headerTxt){
         // Create the custom dialog.
         Dialog<String> dialog = new Dialog<>();
-        dialog.setTitle(headerTxt);
-        dialog.setHeaderText("Choix du niveau");
+        dialog.setTitle("Choix du niveau");
+        dialog.setHeaderText(headerTxt);
 
         // Set the icon (must be included in the project).
         dialog.setGraphic(new ImageView());

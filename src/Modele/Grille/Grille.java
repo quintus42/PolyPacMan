@@ -414,7 +414,6 @@ public class Grille extends Observable implements Runnable{
                 setChanged(); 
                 notifyObservers();
             }else{
-                
                 try {
                     Thread.sleep(100);
                 } catch (InterruptedException ex) {
